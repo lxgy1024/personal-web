@@ -1,0 +1,6 @@
+site/
+.cache/
+*.pyc
+__pycache__/
+docs/superpowers/
+

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\BaiduNetdiskDownload\\\\claude\\\\2201\\\\docs\\\\assets\\\\images\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType File -Path \"C:\\\\BaiduNetdiskDownload\\\\claude\\\\2201\\\\docs\\\\assets\\\\images\\\\.gitkeep\")",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\BaiduNetdiskDownload\\\\claude\\\\2201\\\\overrides\")",
+      "Bash(New-Item -ItemType File -Path \"C:\\\\BaiduNetdiskDownload\\\\claude\\\\2201\\\\overrides\\\\.gitkeep\")",
+      "Bash(pip install *)",
+      "Bash(/c/Users/蒋老师/AppData/Local/Python/pythoncore-3.14-64/python -m pip install -r \"C:/BaiduNetdiskDownload/claude/2201/requirements.txt\")",
+      "Bash(/c/Users/蒋老师/AppData/Local/Python/pythoncore-3.14-64/python -m mkdocs build --strict)",
+      "Bash(/c/Users/蒋老师/AppData/Local/Python/pythoncore-3.14-64/python -c \"import mkdocs; print\\(mkdocs.__version__\\)\")",
+      "Bash(/c/Users/蒋老师/AppData/Local/Python/pythoncore-3.14-64/python -c \"import mkdocs_material; print\\(mkdocs_material.__version__\\)\")",
+      "Bash(/c/Users/蒋老师/AppData/Local/Python/pythoncore-3.14-64/python -c \"import mkdocs_material_migration_check; print\\('ok'\\)\")",
+      "Bash(/c/Users/蒋老师/AppData/Local/Python/pythoncore-3.14-64/python -c \"from mkdocs_material import __version__ as v; print\\(v\\)\")",
+      "Bash(/c/Users/蒋老师/AppData/Local/Python/pythoncore-3.14-64/python -m pip show mkdocs-material)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}
