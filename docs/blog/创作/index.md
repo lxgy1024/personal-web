@@ -5,7 +5,7 @@
 ---
 
 <div>
-<a href="chasing-the-wind-flying-bird.md" class="category-card">
+<a href="chasing-the-wind-flying-bird/" class="category-card">
   <div class="card-title">开始，追风飞鸟</div>
   <div class="card-excerpt">"终会遗忘，终将消逝"——关于中考、离别与自我救赎的故事。还有一首歌。</div>
   <div class="card-meta">
