@@ -61,6 +61,20 @@ nav:
   - 首页: index.md
   - 博客:
     - blog/index.md
+    - 随笔:
+      - 随笔: blog/随笔/index.md
+      - H 城日落之后: blog/随笔/h-city-after-sunset.md
+      - 追风赶月莫停留: blog/随笔/chasing-wind-and-moon.md
+      - 体考模拟感想: blog/随笔/pe-exam-simulation.md
+      - ZJU 与我: blog/随笔/zju-and-me.md
+      - 济南冬风里的降书: blog/随笔/surrender-in-jinan-winter.md
+    - 人物:
+      - 人物: blog/人物/index.md
+      - 我最佩服的人: blog/人物/the-person-i-admire-most.md
+      - 百日誓师？: blog/人物/hundred-day-pledge.md
+    - 创作:
+      - 创作: blog/创作/index.md
+      - 开始，追风飞鸟: blog/创作/chasing-the-wind-flying-bird.md
   - 项目:
     - projects/index.md
 
