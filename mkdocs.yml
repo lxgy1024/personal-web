@@ -15,8 +15,12 @@ theme:
   language: zh
   features:
     - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
     - navigation.top
+    - toc.follow
     - content.code.copy
+    - content.code.annotate
     - search.highlight
     - search.share
   palette:
@@ -34,6 +38,9 @@ theme:
       toggle:
         icon: material/weather-sunny
         name: 切换到亮色模式
+  font:
+    text: Noto Sans SC
+    code: JetBrains Mono
 
 plugins:
   - search
@@ -63,6 +70,7 @@ extra_javascript:
 
 extra_css:
   - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
+  - stylesheets/extra.css
 
 nav:
   - 首页: index.md
