@@ -99,6 +99,7 @@
   transition: all 0.3s ease;
   text-decoration: none !important;
   color: inherit !important;
+  cursor: pointer;
 }
 .category-card:hover {
   transform: translateY(-2px);
