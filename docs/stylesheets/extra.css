@@ -172,7 +172,7 @@
 /* 导航栏背景渐变 */
 .md-header {
   box-shadow: none !important;
-  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%) !important;
+  background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
 }
 
 /* 导航栏标题白色 */
@@ -199,7 +199,7 @@
 
 /* 标签导航区背景 */
 .md-tabs {
-  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%) !important;
+  background: linear-gradient(135deg, #3b82f6 0%, #ec4899 100%) !important;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
@@ -209,8 +209,8 @@
   transition: all 0.25s ease !important;
   font-size: 0.9rem;
   font-weight: 500;
-  padding: 0.5rem 1rem !important;
-  border-radius: 20px;
+  padding: 0.4rem 0.8rem !important;
+  border-radius: 16px;
   margin: 0.3rem 0.15rem;
 }
 
@@ -231,10 +231,10 @@
 
 /* 暗色模式适配 */
 [data-md-color-scheme="slate"] .md-header {
-  background: linear-gradient(135deg, #2563eb 0%, #db2777 100%) !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #be185d 100%) !important;
 }
 [data-md-color-scheme="slate"] .md-tabs {
-  background: linear-gradient(135deg, #2563eb 0%, #db2777 100%) !important;
+  background: linear-gradient(135deg, #1d4ed8 0%, #be185d 100%) !important;
 }
 
 /* === 目录侧边栏 (TOC) === */
