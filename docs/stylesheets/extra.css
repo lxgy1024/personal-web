@@ -168,9 +168,73 @@
   box-shadow: 0 8px 25px rgba(79, 172, 254, 0.12), 0 2px 8px rgba(240, 147, 251, 0.08);
 }
 
-/* === 导航高亮 === */
+/* === 顶部导航栏 === */
+/* 导航栏背景渐变 */
+.md-header {
+  box-shadow: none !important;
+  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%) !important;
+}
+
+/* 导航栏标题白色 */
+.md-header__title,
+.md-header__topic {
+  color: #fff !important;
+}
+
+/* 导航栏图标白色 */
+.md-header__button.md-icon {
+  color: #fff !important;
+}
+
+/* 导航栏来源按钮白色 */
+.md-source {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+.md-source__repository {
+  color: #fff !important;
+}
+.md-source__icon {
+  color: #fff !important;
+}
+
+/* 标签导航区背景 */
+.md-tabs {
+  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* 导航标签 */
+.md-tabs__link {
+  color: rgba(255, 255, 255, 0.85) !important;
+  transition: all 0.25s ease !important;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: 20px;
+  margin: 0.3rem 0.15rem;
+}
+
+.md-tabs__link:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* 导航标签激活 */
+.md-tabs__item--active .md-tabs__link,
 .md-tabs__link--active {
-  color: #ec4899 !important; /* pink-500 */
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 暗色模式适配 */
+[data-md-color-scheme="slate"] .md-header {
+  background: linear-gradient(135deg, #2563eb 0%, #db2777 100%) !important;
+}
+[data-md-color-scheme="slate"] .md-tabs {
+  background: linear-gradient(135deg, #2563eb 0%, #db2777 100%) !important;
 }
 
 /* === 目录侧边栏 (TOC) === */
