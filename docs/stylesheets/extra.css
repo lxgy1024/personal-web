@@ -1,0 +1,174 @@
+/* ============================================
+   个人网站 - 前端美化自定义样式
+   蓝粉白简洁风格
+   ============================================ */
+
+/* === 全局基础 === */
+
+/* 选中文字颜色 */
+::selection {
+  background-color: rgba(236, 72, 153, 0.2); /* pink-500 低透明度 */
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* slate-100 */
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #93c5fd, #f9a8d4); /* blue-300 → pink-300 */
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #60a5fa, #f472b6); /* blue-400 → pink-400 */
+}
+
+/* === 链接 === */
+.md-typeset a {
+  transition: color 0.2s ease;
+}
+.md-typeset a:hover {
+  color: #ec4899 !important; /* pink-500 */
+}
+
+/* === 首页 Hero === */
+.hero-section {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  margin: -1.6rem -1.6rem 2rem;
+  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%);
+  border-radius: 0 0 24px 24px;
+  color: #fff;
+}
+.hero-section h1 {
+  color: #fff !important;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.hero-section .hero-tagline {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+/* Hero 入口卡片 */
+.hero-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.hero-cards a {
+  display: block;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  border-radius: 12px;
+  color: #fff !important;
+  text-align: center;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.hero-cards a:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-4px);
+  color: #fff !important;
+}
+.hero-cards .card-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.hero-cards .card-desc {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+/* === 分类页卡片 === */
+.category-card {
+  display: block;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+  color: inherit !important;
+}
+.category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.12), 0 2px 8px rgba(240, 147, 251, 0.08);
+  border-color: transparent;
+}
+.category-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.3rem;
+}
+.category-card:hover .card-title {
+  color: #3b82f6; /* blue-500 */
+}
+.category-card .card-excerpt {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.6;
+}
+.category-card .card-meta {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+/* === 标签 === */
+.tag {
+  display: inline-block;
+  padding: 0.15em 0.6em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #dbeafe, #fce7f3); /* blue-100 → pink-100 */
+  color: #7c3aed !important;
+  margin-right: 0.3rem;
+  transition: all 0.2s ease;
+}
+.tag:hover {
+  background: linear-gradient(135deg, #93c5fd, #f9a8d4);
+  color: #fff !important;
+}
+
+/* === 文章页 === */
+/* 标题底部蓝粉装饰线 */
+.md-typeset h1 {
+  border-bottom: 3px solid;
+  border-image: linear-gradient(90deg, #4facfe, #f093fb) 1;
+  padding-bottom: 0.3rem;
+}
+
+/* 文章正文行距 */
+.md-typeset {
+  line-height: 1.8;
+}
+
+/* === 卡片悬浮效果（通用） === */
+.md-typeset .grid.cards > ol > li,
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid.cards > li {
+  transition: all 0.3s ease;
+  border-color: #e2e8f0;
+}
+.md-typeset .grid.cards > ol > li:hover,
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid.cards > li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.12), 0 2px 8px rgba(240, 147, 251, 0.08);
+}
+
+/* === 导航高亮 === */
+.md-tabs__link--active {
+  color: #ec4899 !important; /* pink-500 */
+}
