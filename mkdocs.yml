@@ -42,6 +42,7 @@ plugins:
       post_dir: blog/posts
       archive: true
       categories: true
+      post_excerpt: optional
   - tags
 
 markdown_extensions:
