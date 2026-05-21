@@ -5,7 +5,7 @@
 ---
 
 <div>
-<a href="the-person-i-admire-most.md" class="category-card">
+<a href="the-person-i-admire-most/" class="category-card">
   <div class="card-title">我最佩服的人</div>
   <div class="card-excerpt">柳颖同学——她始终如一。关于"美"的理解，关于孤独，关于这个时代的独行。</div>
   <div class="card-meta">
