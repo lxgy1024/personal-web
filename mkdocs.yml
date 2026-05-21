@@ -91,6 +91,7 @@ nav:
     - 创作:
       - 创作: blog/创作/index.md
       - 开始，追风飞鸟: blog/创作/chasing-the-wind-flying-bird.md
+    - 标签: blog/tags.md
   - 项目:
     - 项目: projects/index.md
     - MC Mod: projects/mc-mod.md

@@ -300,3 +300,34 @@
 .md-footer-nav__link:hover {
   color: #93c5fd; /* blue-300 */
 }
+
+/* === 标签页 (tags.md) === */
+/* 标签页中的标签徽章 */
+.md-tag {
+  background: linear-gradient(135deg, #dbeafe, #fce7f3) !important;
+  color: #7c3aed !important;
+  font-size: 0.7rem !important;
+  border-radius: 999px !important;
+  padding: 0.15em 0.8em !important;
+  transition: all 0.2s ease;
+}
+.md-tag:hover {
+  background: linear-gradient(135deg, #93c5fd, #f9a8d4) !important;
+  color: #fff !important;
+}
+
+/* 标签页面文章列表 */
+.md-typeset .md-tags + ul {
+  margin-top: 0.5rem;
+}
+.md-typeset .md-tags + ul li {
+  margin-bottom: 0.3rem;
+}
+.md-typeset .md-tags + ul li a {
+  color: #3b82f6;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.md-typeset .md-tags + ul li a:hover {
+  color: #ec4899;
+}
