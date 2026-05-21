@@ -6,6 +6,8 @@ tags:
   - 青春
   - 成长
   - 音乐
+categories:
+  - stories
 draft: false
 ---
 

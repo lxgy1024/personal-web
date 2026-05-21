@@ -6,6 +6,8 @@ tags:
   - ZJU
   - 梦想
   - 青春
+categories:
+  - essays
 draft: false
 ---
 

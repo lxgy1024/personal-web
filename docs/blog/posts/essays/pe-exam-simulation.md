@@ -6,6 +6,8 @@ tags:
   - 体考
   - 青春
   - 回忆
+categories:
+  - essays
 draft: false
 ---
 

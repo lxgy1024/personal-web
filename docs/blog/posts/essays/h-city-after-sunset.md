@@ -6,6 +6,8 @@ tags:
   - 情感
   - 杭州
   - 日落
+categories:
+  - essays
 draft: false
 ---
 

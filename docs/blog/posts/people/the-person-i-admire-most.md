@@ -6,6 +6,8 @@ tags:
   - 人物
   - 青春
   - 柳颖
+categories:
+  - people
 draft: false
 ---
 

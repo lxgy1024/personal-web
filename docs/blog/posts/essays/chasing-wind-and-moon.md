@@ -6,6 +6,8 @@ tags:
   - 感悟
   - 成长
   - 励志
+categories:
+  - essays
 draft: false
 ---
 

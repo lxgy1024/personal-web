@@ -6,6 +6,8 @@ tags:
   - 情感
   - 济南
   - 自我
+categories:
+  - essays
 draft: false
 ---
 

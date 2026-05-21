@@ -6,6 +6,8 @@ tags:
   - 人物
   - 青春
   - 阿聪
+categories:
+  - people
 draft: false
 ---
 
