@@ -14,10 +14,8 @@ OIer · MtF · 二次元爱好者 · 数学物理大好き
 
 ## 我的项目
 
-前往[项目列表](projects/index.md)查看喵。
-
-- MC Mod — 我的世界模组（即将上线）
-- 爬虫工具 — 数据采集工具（即将上线）
+- [MC Mod](projects/mc-mod.md) — 我的世界模组
+- [爬虫工具](projects/crawler.md) — 数据采集工具
 
 ## 找到我
 

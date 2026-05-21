@@ -75,7 +75,9 @@ nav:
       - 创作: blog/创作/index.md
       - 开始，追风飞鸟: blog/创作/chasing-the-wind-flying-bird.md
   - 项目:
-    - projects/index.md
+    - 项目: projects/index.md
+    - MC Mod: projects/mc-mod.md
+    - 爬虫工具: projects/crawler.md
 
 extra:
   social:
