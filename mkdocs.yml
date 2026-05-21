@@ -40,9 +40,8 @@ plugins:
   - blog:
       blog_dir: blog
       post_dir: blog/posts
-      archive: true
-      categories: true
-      post_excerpt: optional
+      archive: false
+      categories: false
   - tags
 
 markdown_extensions:
