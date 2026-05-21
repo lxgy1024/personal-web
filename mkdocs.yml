@@ -56,6 +56,14 @@ markdown_extensions:
   - pymdownx.details
   - attr_list
 
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js
+  - js/katex.js
+
+extra_css:
+  - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
+
 nav:
   - 首页: index.md
   - 博客:
