@@ -1,10 +1,13 @@
 site_name: 我的个人网站
-site_url: https://<your-username>.github.io/<your-repo>/
-site_author: <your-name>
+site_url: https://lxgy1024.github.io/personal-web/
+site_author: lxgy1024
 site_description: 个人博客与项目展示
 
-repo_name: <your-username>/<your-repo>
-repo_url: https://github.com/<your-username>/<your-repo>
+exclude_docs: |
+  superpowers/
+
+repo_name: lxgy1024/personal-web
+repo_url: https://github.com/lxgy1024/personal-web
 edit_uri: edit/main/docs/
 
 theme:
@@ -62,4 +65,4 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/<your-username>
+      link: https://github.com/lxgy1024
