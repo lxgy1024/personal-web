@@ -6,12 +6,12 @@
 
 <div class="hero-cards">
 
-<a href="blog/index.md">
+<a href="blog/">
   <div class="card-title">📝 博客</div>
   <div class="card-desc">8 篇文章</div>
 </a>
 
-<a href="projects/index.md">
+<a href="projects/">
   <div class="card-title">💻 项目</div>
   <div class="card-desc">2 个项目</div>
 </a>
