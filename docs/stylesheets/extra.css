@@ -276,6 +276,69 @@
   text-underline-offset: 2px;
 }
 
+/* === 社交页卡片 === */
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.social-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  transition: all 0.3s ease;
+  text-decoration: none !important;
+  color: inherit !important;
+  cursor: pointer;
+}
+.social-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(79, 172, 254, 0.12), 0 2px 8px rgba(240, 147, 251, 0.08);
+  border-color: transparent;
+}
+.social-card .social-icon {
+  color: #64748b;
+  margin-bottom: 0.75rem;
+  transition: color 0.3s ease;
+}
+.social-card:hover .social-icon {
+  color: #3b82f6;
+}
+.social-card .social-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.3rem;
+}
+.social-card:hover .social-name {
+  color: #3b82f6;
+}
+.social-card .social-desc {
+  font-size: 0.85rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+[data-md-color-scheme="slate"] .social-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-md-color-scheme="slate"] .social-card .social-name {
+  color: #f1f5f9;
+}
+[data-md-color-scheme="slate"] .social-card .social-desc {
+  color: #94a3b8;
+}
+[data-md-color-scheme="slate"] .social-card:hover .social-name,
+[data-md-color-scheme="slate"] .social-card:hover .social-icon {
+  color: #93c5fd;
+}
+
 /* 页脚社交链接 */
 .md-footer-social {
   color: rgba(255, 255, 255, 0.9);

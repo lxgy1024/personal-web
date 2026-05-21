@@ -75,6 +75,7 @@ extra_css:
 nav:
   - 首页: index.md
   - 关于: about.md
+  - 社交: social.md
   - 博客:
     - blog/index.md
     - 随笔:

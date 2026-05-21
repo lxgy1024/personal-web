@@ -50,8 +50,7 @@
 
 ## 社交
 
-- **GitHub**: [lxgy1024](https://github.com/lxgy1024) — 代码和项目
-- **Email**: lxgy1024@gmail.com — 欢迎写信给孩子喵
+详见 [社交页面](social.md) 喵～ GitHub、Email、以及更多联系方式都可以在那里找到 🐱
 
 ## 关于这个网站
 
