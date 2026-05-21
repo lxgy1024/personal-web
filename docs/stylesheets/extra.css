@@ -172,3 +172,67 @@
 .md-tabs__link--active {
   color: #ec4899 !important; /* pink-500 */
 }
+
+/* === 目录侧边栏 (TOC) === */
+/* TOC 链接悬停 */
+.md-nav--secondary .md-nav__link:hover {
+  color: #ec4899; /* pink-500 */
+}
+
+/* TOC 当前激活项 */
+.md-nav--secondary .md-nav__link--active {
+  color: #3b82f6; /* blue-500 */
+  font-weight: 600;
+  border-left: 3px solid;
+  border-image: linear-gradient(180deg, #4facfe, #f093fb) 1;
+  padding-left: 0.6rem;
+}
+
+/* TOC 链接过渡 */
+.md-nav--secondary .md-nav__link {
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  padding-left: 0.6rem;
+}
+
+/* === 页脚 === */
+/* 页脚上部分隔线渐变 */
+.md-footer-meta {
+  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%) !important;
+}
+
+/* 页脚版权区 */
+.md-footer-copyright {
+  color: rgba(255, 255, 255, 0.9);
+}
+.md-footer-copyright a {
+  color: #fff !important;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* 页脚社交链接 */
+.md-footer-social {
+  color: rgba(255, 255, 255, 0.9);
+}
+.md-footer-social a {
+  color: #fff !important;
+  transition: transform 0.2s ease;
+}
+.md-footer-social a:hover {
+  transform: scale(1.15);
+  color: #ffd700 !important; /* 金色悬浮高亮 */
+}
+
+/* 页脚主体区域微调 */
+.md-footer-nav {
+  background-color: #1e293b; /* slate-800 */
+}
+
+/* 页脚导航链接 */
+.md-footer-nav__link {
+  transition: color 0.2s ease;
+}
+.md-footer-nav__link:hover {
+  color: #93c5fd; /* blue-300 */
+}
