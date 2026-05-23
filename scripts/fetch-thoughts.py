@@ -1,35 +1,36 @@
 """Fetch Bluesky feed and generate docs/thoughts.md."""
 
+import html
 import json
 import os
 import urllib.request
 import urllib.error
-from datetime import datetime, timezone
+from datetime import datetime
 
 BLUESKY_HANDLE = "lxgy1024.bsky.social"
-API_URL = "https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed"
+BLUESKY_PROFILE_URL = f"https://bsky.app/profile/{BLUESKY_HANDLE}"
+API_PATH = "/xrpc/app.bsky.feed.getAuthorFeed"
+PRIMARY_HOST = "https://public.api.bsky.app"
+FALLBACK_HOST = "https://api.bsky.app"
 MAX_POSTS = 20
 OUTPUT = "docs/thoughts.md"
 
 
+def _do_request(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "personal-website/1.0"})
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read())
+
+
 def fetch_feed():
     params = f"?actor={BLUESKY_HANDLE}&filter=posts_no_replies&limit={MAX_POSTS}"
-    url = API_URL + params
-    try:
-        req = urllib.request.Request(url, headers={"User-Agent": "personal-website/1.0"})
-        with urllib.request.urlopen(req, timeout=10) as resp:
-            return json.loads(resp.read())
-    except (urllib.error.URLError, urllib.error.HTTPError, OSError) as e:
-        print(f"Bluesky API error (primary): {e}")
-        # Fallback to alternative endpoint
-        fallback_url = "https://api.bsky.app" + url[url.index("/xrpc"):]
+    for host in (PRIMARY_HOST, FALLBACK_HOST):
+        url = host + API_PATH + params
         try:
-            req2 = urllib.request.Request(fallback_url, headers={"User-Agent": "personal-website/1.0"})
-            with urllib.request.urlopen(req2, timeout=10) as resp2:
-                return json.loads(resp2.read())
-        except (urllib.error.URLError, urllib.error.HTTPError, OSError) as e2:
-            print(f"Bluesky API error (fallback): {e2}")
-            return None
+            return _do_request(url)
+        except (urllib.error.URLError, urllib.error.HTTPError, OSError) as e:
+            print(f"Bluesky API error ({host}): {e}")
+    return None
 
 
 def format_time(iso_str):
@@ -55,10 +56,10 @@ def build_page(data):
         "  - toc",
         "---",
         "",
-        "<div class=\"thoughts-header\">",
+        '<div class="thoughts-header">',
         "# 碎碎念",
         "",
-        "同步自 [Bluesky](https://bsky.app/profile/lxgy1024.bsky.social)",
+        f"同步自 [Bluesky]({BLUESKY_PROFILE_URL})",
         "</div>",
         "",
     ]
@@ -72,9 +73,8 @@ def build_page(data):
             continue
 
         lines.append('<div class="thought-card">')
-        lines.append(f'  <div class="thought-text">{_escape_html(text)}</div>')
+        lines.append(f'  <div class="thought-text">{html.escape(text)}</div>')
 
-        # Embedded images
         embed = record.get("embed")
         if embed and embed.get("$type") == "app.bsky.embed.images":
             images = embed.get("images", [])
@@ -84,16 +84,15 @@ def build_page(data):
                     src = img.get("fullsize", "")
                     alt = img.get("alt", "")
                     if src:
-                        lines.append(f'    <img src="{src}" alt="{_escape_html(alt)}" loading="lazy">')
+                        lines.append(f'    <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
                 lines.append("  </div>")
 
-        # External link preview
         if embed and embed.get("$type") == "app.bsky.embed.external":
             ext = embed.get("external", {})
             uri = ext.get("uri", "")
             title = ext.get("title", "")
             if uri:
-                lines.append(f'  <div class="thought-link"><a href="{uri}" target="_blank" rel="noopener">{_escape_html(title) or uri}</a></div>')
+                lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
 
         lines.append(f'  <div class="thought-time">{format_time(created_at)}</div>')
         lines.append("</div>")
@@ -102,7 +101,7 @@ def build_page(data):
     lines.extend([
         '<div class="thoughts-footer">',
         "更多想法请关注我的 ",
-        "[Bluesky](https://bsky.app/profile/lxgy1024.bsky.social)",
+        f"[Bluesky]({BLUESKY_PROFILE_URL})",
         "</div>",
         "",
     ])
@@ -125,12 +124,8 @@ def _error_page(message):
     ])
 
 
-def _escape_html(text):
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
-
-
 def main():
-    os.makedirs("docs", exist_ok=True)
+    os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
     data = fetch_feed()
     page = build_page(data)
     with open(OUTPUT, "w", encoding="utf-8") as f:
