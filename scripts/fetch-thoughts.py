@@ -50,17 +50,9 @@ def build_page(data):
         return _error_page("还没有碎碎念～")
 
     lines = [
-        "---",
-        "hide:",
-        "  - navigation",
-        "  - toc",
-        "---",
-        "",
-        '<div class="thoughts-header" markdown="1">',
         "# 碎碎念",
         "",
         f"同步自 [Bluesky]({BLUESKY_PROFILE_URL})",
-        "</div>",
         "",
     ]
 
@@ -72,8 +64,10 @@ def build_page(data):
         if not text:
             continue
 
+        lines.append(f"### {format_time(created_at)}")
+        lines.append("")
         lines.append('<div class="thought-card">')
-        lines.append(f'  <div class="thought-text">{html.escape(text)}</div>')
+        lines.append(f'<div class="thought-text">{html.escape(text)}</div>')
 
         embed = post.get("embed") or record.get("embed")
         if embed:
@@ -84,7 +78,7 @@ def build_page(data):
                     src = img.get("fullsize", "")
                     alt = img.get("alt", "")
                     if src:
-                        img_tags.append(f'    <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
+                        img_tags.append(f'  <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
                 if img_tags:
                     lines.append('  <div class="thought-images">')
                     lines.extend(img_tags)
@@ -96,7 +90,6 @@ def build_page(data):
                 if uri:
                     lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
 
-        lines.append(f'  <div class="thought-time">{format_time(created_at)}</div>')
         lines.append("</div>")
         lines.append("")
 
@@ -105,7 +98,6 @@ def build_page(data):
         "更多想法请关注我的 ",
         f"[Bluesky]({BLUESKY_PROFILE_URL})",
         "</div>",
-        "",
     ])
 
     return "\n".join(lines)
@@ -113,16 +105,9 @@ def build_page(data):
 
 def _error_page(message):
     return "\n".join([
-        "---",
-        "hide:",
-        "  - navigation",
-        "  - toc",
-        "---",
-        "",
         "# 碎碎念",
         "",
         f">{message}",
-        "",
     ])
 
 
