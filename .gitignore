@@ -3,5 +3,6 @@ site/
 *.pyc
 __pycache__/
 docs/superpowers/
+docs/thoughts.md
 .claude/settings.local.json
 
