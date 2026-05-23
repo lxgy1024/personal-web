@@ -56,7 +56,7 @@ def build_page(data):
         "  - toc",
         "---",
         "",
-        '<div class="thoughts-header">',
+        '<div class="thoughts-header" markdown="1">',
         "# 碎碎念",
         "",
         f"同步自 [Bluesky]({BLUESKY_PROFILE_URL})",
