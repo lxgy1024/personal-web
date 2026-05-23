@@ -397,3 +397,72 @@ a.social-card {
 .md-typeset .md-tags + ul li a:hover {
   color: #ec4899;
 }
+
+/* === 碎碎念页面 === */
+.thoughts-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.thoughts-header h1 {
+  border-bottom: none !important;
+}
+.thought-card {
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+.thought-card:hover {
+  box-shadow: 0 4px 20px rgba(79, 172, 254, 0.10), 0 2px 6px rgba(240, 147, 251, 0.06);
+}
+.thought-text {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #1e293b;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.thought-images {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  overflow-x: auto;
+}
+.thought-images img {
+  max-height: 200px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.thought-link {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+}
+.thought-link a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+.thought-link a:hover {
+  color: #ec4899;
+}
+.thought-time {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+.thoughts-footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* 暗色模式适配 */
+[data-md-color-scheme="slate"] .thought-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+[data-md-color-scheme="slate"] .thought-text {
+  color: #f1f5f9;
+}
