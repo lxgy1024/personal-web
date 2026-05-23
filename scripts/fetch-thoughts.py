@@ -12,7 +12,7 @@ BLUESKY_PROFILE_URL = f"https://bsky.app/profile/{BLUESKY_HANDLE}"
 API_PATH = "/xrpc/app.bsky.feed.getAuthorFeed"
 PRIMARY_HOST = "https://public.api.bsky.app"
 FALLBACK_HOST = "https://api.bsky.app"
-MAX_POSTS = 20
+MAX_POSTS = 50
 OUTPUT = "docs/thoughts.md"
 
 
@@ -75,25 +75,26 @@ def build_page(data):
         lines.append('<div class="thought-card">')
         lines.append(f'  <div class="thought-text">{html.escape(text)}</div>')
 
-        embed = record.get("embed")
-        if embed and embed.get("$type") == "app.bsky.embed.images":
-            img_tags = []
-            for img in embed.get("images", []):
-                src = img.get("fullsize", "")
-                alt = img.get("alt", "")
-                if src:
-                    img_tags.append(f'    <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
-            if img_tags:
-                lines.append('  <div class="thought-images">')
-                lines.extend(img_tags)
-                lines.append("  </div>")
-
-        if embed and embed.get("$type") == "app.bsky.embed.external":
-            ext = embed.get("external", {})
-            uri = ext.get("uri", "")
-            title = ext.get("title", "")
-            if uri:
-                lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
+        embed = post.get("embed") or record.get("embed")
+        if embed:
+            etype = embed.get("$type", "")
+            if "images" in etype:
+                img_tags = []
+                for img in embed.get("images", []):
+                    src = img.get("fullsize", "")
+                    alt = img.get("alt", "")
+                    if src:
+                        img_tags.append(f'    <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
+                if img_tags:
+                    lines.append('  <div class="thought-images">')
+                    lines.extend(img_tags)
+                    lines.append("  </div>")
+            elif "external" in etype:
+                ext = embed.get("external", {})
+                uri = ext.get("uri", "")
+                title = ext.get("title", "")
+                if uri:
+                    lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
 
         lines.append(f'  <div class="thought-time">{format_time(created_at)}</div>')
         lines.append("</div>")
