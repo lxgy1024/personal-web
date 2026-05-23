@@ -77,14 +77,15 @@ def build_page(data):
 
         embed = record.get("embed")
         if embed and embed.get("$type") == "app.bsky.embed.images":
-            images = embed.get("images", [])
-            if images:
+            img_tags = []
+            for img in embed.get("images", []):
+                src = img.get("fullsize", "")
+                alt = img.get("alt", "")
+                if src:
+                    img_tags.append(f'    <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
+            if img_tags:
                 lines.append('  <div class="thought-images">')
-                for img in images:
-                    src = img.get("fullsize", "")
-                    alt = img.get("alt", "")
-                    if src:
-                        lines.append(f'    <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
+                lines.extend(img_tags)
                 lines.append("  </div>")
 
         if embed and embed.get("$type") == "app.bsky.embed.external":
