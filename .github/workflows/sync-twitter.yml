@@ -11,5 +11,12 @@ jobs:
     steps:
       - name: Call Vercel sync function
         run: |
-          curl -fsS "https://twitter-bsky-bridge.vercel.app/api/cron/sync" \
-            --max-time 30 || echo "sync failed (will retry next interval)"
+          response=$(curl -sS "https://twitter-bridge-eight.vercel.app/api/cron/sync" --max-time 30)
+          echo "Response: $response"
+          synced=$(echo "$response" | jq -r '.synced // 0')
+          errors=$(echo "$response" | jq -r '.errors | join("; ")' 2>/dev/null || echo "")
+          if [ "$synced" = "0" ] && [ -n "$errors" ]; then
+            echo "::error::Sync failed: $errors"
+            exit 1
+          fi
+          echo "Synced $synced tweets"

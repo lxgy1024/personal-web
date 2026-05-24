@@ -1,5 +1,5 @@
-import { Scraper } from 'agent-twitter-client';
 import { AtpAgent, RichText } from '@atproto/api';
+import { fetchUserTweets } from '../../lib/twitter.js';
 
 const {
   TWITTER_AUTH_TOKEN,
@@ -7,10 +7,9 @@ const {
   TWITTER_USERNAME,
   BLUESKY_HANDLE,
   BLUESKY_APP_PASSWORD,
-  CRON_SECRET,
 } = process.env;
 
-// Regex to find original tweet links in Bluesky post text
+/** Regex to find original tweet links in Bluesky post text. */
 function buildTweetUrlPattern(username: string): RegExp {
   return new RegExp(
     `https?://(?:twitter|x)\\.com/${username}/status/(\\d+)`,
@@ -24,10 +23,6 @@ function extractTweetIds(text: string, username: string): string[] {
 }
 
 export default async function handler(req: any, res: any) {
-  // ---- Security ----
-  if (CRON_SECRET && req.query?.secret !== CRON_SECRET) {
-    return res.status(401).json({ error: 'Invalid cron secret' });
-  }
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -38,23 +33,19 @@ export default async function handler(req: any, res: any) {
   try {
     // ========== 1. Twitter: fetch recent tweets ==========
     if (!TWITTER_AUTH_TOKEN) throw new Error('Missing TWITTER_AUTH_TOKEN');
+    if (!TWITTER_CT0) throw new Error('Missing TWITTER_CT0 — ct0 is required for GraphQL auth');
     if (!TWITTER_USERNAME) throw new Error('Missing TWITTER_USERNAME');
 
     console.log(`[sync] Fetching tweets for @${TWITTER_USERNAME} ...`);
 
-    const scraper = new Scraper();
+    const tweets = await fetchUserTweets(TWITTER_USERNAME, 20, TWITTER_AUTH_TOKEN, TWITTER_CT0);
 
-    // Authenticate via cookies (RSSHub style)
-    const cookies: string[] = [`auth_token=${TWITTER_AUTH_TOKEN}`];
-    if (TWITTER_CT0) cookies.push(`ct0=${TWITTER_CT0}`);
-    await scraper.setCookies(cookies);
-
-    const tweetIter = scraper.getTweets(TWITTER_USERNAME, 20);
-    const tweets: Array<{ id: string; text: string; timeParsed?: Date; photos?: Array<{ url: string }> }> = [];
-    for await (const t of tweetIter) {
-      if (t.id && t.text) {
-        tweets.push(t);
-      }
+    if (tweets.length === 0) {
+      // Could be an auth failure or genuinely empty — log a warning
+      const msg =
+        'Got 0 tweets from Twitter — cookies may be expired. Renew via F12 → Application → Cookies → twitter.com → copy auth_token and ct0';
+      console.warn('[sync] ' + msg);
+      errors.push(msg);
     }
 
     console.log(`[sync] Got ${tweets.length} tweets from Twitter`);
@@ -97,9 +88,38 @@ export default async function handler(req: any, res: any) {
         const rt = new RichText({ text: postText });
         await rt.detectFacets(agent);
 
+        // Build embed with images if present
+        let embed: any = undefined;
+        if (tweet.photos && tweet.photos.length > 0) {
+          const images: any[] = [];
+          for (const photo of tweet.photos) {
+            try {
+              const imgResp = await fetch(photo.url);
+              if (!imgResp.ok) {
+                console.warn(`[sync] Failed to download image ${photo.url}: ${imgResp.status}`);
+                continue;
+              }
+              const imgBuf = Buffer.from(await imgResp.arrayBuffer());
+              const blobRef = await agent.uploadBlob(imgBuf, {
+                encoding: 'image/jpeg',
+              });
+              images.push({
+                alt: '',
+                image: blobRef.data.blob,
+              });
+            } catch (e: any) {
+              console.warn(`[sync] Failed to upload image ${photo.url}: ${e.message}`);
+            }
+          }
+          if (images.length > 0) {
+            embed = { $type: 'app.bsky.embed.images', images };
+          }
+        }
+
         await agent.post({
           text: rt.text,
           facets: rt.facets,
+          embed,
           createdAt: tweet.timeParsed?.toISOString() ?? new Date().toISOString(),
         });
 
@@ -115,6 +135,7 @@ export default async function handler(req: any, res: any) {
     console.error('[sync] Fatal:', e.message);
   }
 
+  // Partial success (some tweets posted, some failed) still returns 200
   const status = errors.length > 0 && synced === 0 ? 500 : 200;
   const body: Record<string, unknown> = { synced };
   if (errors.length > 0) body.errors = errors;
