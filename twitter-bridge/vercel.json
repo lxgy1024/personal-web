@@ -3,5 +3,11 @@
   "outputDirectory": ".",
   "github": {
     "silent": true
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/sync",
+      "schedule": "*/3 * * * *"
+    }
+  ]
 }

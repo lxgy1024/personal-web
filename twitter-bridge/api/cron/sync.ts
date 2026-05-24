@@ -7,7 +7,10 @@ const {
   TWITTER_USERNAME,
   BLUESKY_HANDLE,
   BLUESKY_APP_PASSWORD,
+  GITHUB_PAT,
 } = process.env;
+
+const GITHUB_REPO = 'lxgy1024/personal-web';
 
 /** Regex to find original tweet links in Bluesky post text. */
 function buildTweetUrlPattern(username: string): RegExp {
@@ -22,7 +25,34 @@ function extractTweetIds(text: string, username: string): string[] {
   return [...text.matchAll(pattern)].map((m) => m[1]);
 }
 
+/** Trigger GitHub Actions rebuild via workflow_dispatch. */
+async function triggerRebuild(): Promise<void> {
+  if (!GITHUB_PAT) {
+    console.warn('[rebuild] No GITHUB_PAT set — skipping rebuild trigger');
+    return;
+  }
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/ci.yml/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${GITHUB_PAT}`,
+        'user-agent': 'twitter-bsky-bridge/1.0',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ ref: 'main' }),
+    },
+  );
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    console.warn(`[rebuild] GitHub dispatch failed (${res.status}): ${body.slice(0, 200)}`);
+  } else {
+    console.log('[rebuild] GitHub rebuild triggered');
+  }
+}
+
 export default async function handler(req: any, res: any) {
+  // Support both Vercel Cron (no auth check) and direct calls
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -41,7 +71,6 @@ export default async function handler(req: any, res: any) {
     const tweets = await fetchUserTweets(TWITTER_USERNAME, 20, TWITTER_AUTH_TOKEN, TWITTER_CT0);
 
     if (tweets.length === 0) {
-      // Could be an auth failure or genuinely empty — log a warning
       const msg =
         'Got 0 tweets from Twitter — cookies may be expired. Renew via F12 → Application → Cookies → twitter.com → copy auth_token and ct0';
       console.warn('[sync] ' + msg);
@@ -133,6 +162,11 @@ export default async function handler(req: any, res: any) {
   } catch (e: any) {
     errors.push(`Fatal error: ${e.message}`);
     console.error('[sync] Fatal:', e.message);
+  }
+
+  // ========== 4. Trigger site rebuild if sync had any activity ==========
+  if (synced > 0 || errors.length === 0) {
+    await triggerRebuild();
   }
 
   // Partial success (some tweets posted, some failed) still returns 200
