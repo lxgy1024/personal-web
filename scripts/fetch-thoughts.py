@@ -1,4 +1,4 @@
-"""Fetch Bluesky feed and generate docs/thoughts.md."""
+"""Fetch Bluesky feed and generate docs/thoughts/ pages with year-based navigation."""
 
 import html
 import json
@@ -13,7 +13,7 @@ API_PATH = "/xrpc/app.bsky.feed.getAuthorFeed"
 PRIMARY_HOST = "https://public.api.bsky.app"
 FALLBACK_HOST = "https://api.bsky.app"
 MAX_POSTS = 50
-OUTPUT = "docs/thoughts.md"
+OUTPUT_DIR = "docs/thoughts"
 CST = timezone(timedelta(hours=8), "CST")
 
 
@@ -51,15 +51,118 @@ def extract_year(iso_str):
         return None
 
 
-def build_page(data):
+def render_post(created_at, text, post, record):
+    """Render a single thought post as markdown lines."""
+    lines = []
+    lines.append(f"### {format_time(created_at)}")
+    lines.append("")
+    lines.append('<div class="thought-card">')
+    lines.append(f'<div class="thought-text">{html.escape(text)}</div>')
+
+    embed = post.get("embed") or record.get("embed")
+    if embed:
+        etype = embed.get("$type", "")
+        if "images" in etype:
+            img_tags = []
+            for img in embed.get("images", []):
+                src = img.get("fullsize", "")
+                alt = img.get("alt", "")
+                if src:
+                    img_tags.append(f'  <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
+            if img_tags:
+                lines.append('  <div class="thought-images">')
+                lines.extend(img_tags)
+                lines.append("  </div>")
+        elif "external" in etype:
+            ext = embed.get("external", {})
+            uri = ext.get("uri", "")
+            title = ext.get("title", "")
+            if uri:
+                lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
+
+    lines.append("</div>")
+    lines.append("")
+    return lines
+
+
+def make_year_page(year, posts):
+    """Build a page for a single year."""
+    lines = [
+        f"# {year} 年",
+        "",
+        f"同步自 [Bluesky]({BLUESKY_PROFILE_URL}) · 时间为北京时间 (UTC+8)",
+        "",
+    ]
+    for created_at, text, post, record in posts:
+        lines.extend(render_post(created_at, text, post, record))
+
+    lines.extend([
+        '<div class="thoughts-footer">',
+        "更多想法请关注我的 ",
+        f"[Bluesky]({BLUESKY_PROFILE_URL})",
+        "</div>",
+    ])
+    return "\n".join(lines)
+
+
+def make_index_page(sorted_years, all_posts):
+    """Build the landing page for thoughts showing all years."""
+    lines = [
+        "# 碎碎念",
+        "",
+        f"同步自 [Bluesky]({BLUESKY_PROFILE_URL}) · 时间为北京时间 (UTC+8)",
+        "",
+    ]
+    # Show latest year's posts on the landing page
+    latest = sorted_years[0] if sorted_years else None
+    if latest:
+        lines.append(f"最新：{latest} 年")
+        lines.append("")
+
+    for created_at, text, post, record in all_posts:
+        lines.extend(render_post(created_at, text, post, record))
+
+    lines.extend([
+        '<div class="thoughts-footer">',
+        "更多想法请关注我的 ",
+        f"[Bluesky]({BLUESKY_PROFILE_URL})",
+        "</div>",
+    ])
+    return "\n".join(lines)
+
+
+def make_empty_page():
+    return "\n".join([
+        "# 碎碎念",
+        "",
+        "还没有碎碎念～",
+    ])
+
+
+def main():
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    data = fetch_feed()
     if data is None:
-        return _error_page("暂时无法同步，请稍后再来喵～")
+        page = "\n".join([
+            "# 碎碎念",
+            "",
+            "> 暂时无法同步，请稍后再来喵～",
+        ])
+        with open(os.path.join(OUTPUT_DIR, "index.md"), "w", encoding="utf-8") as f:
+            f.write(page)
+        print("Generated docs/thoughts/index.md (error)")
+        return
 
     feed = data.get("feed", [])
     if not feed:
-        return _error_page("还没有碎碎念～")
+        page = make_empty_page()
+        with open(os.path.join(OUTPUT_DIR, "index.md"), "w", encoding="utf-8") as f:
+            f.write(page)
+        print("Generated docs/thoughts/index.md (empty)")
+        return
 
-    # Collect and group posts by year
+    # Collect posts
     posts = []
     for item in feed:
         post = item.get("post", {})
@@ -70,94 +173,27 @@ def build_page(data):
             continue
         posts.append((created_at, text, post, record))
 
-    # Group by year (Beijing time)
+    # Group by year
     years = {}
     for created_at, text, post, record in posts:
         year = extract_year(created_at) or "未知"
         years.setdefault(year, []).append((created_at, text, post, record))
 
-    # Sort years descending
     sorted_years = sorted(years.keys(), reverse=True)
 
-    lines = [
-        "# 碎碎念",
-        "",
-        f"同步自 [Bluesky]({BLUESKY_PROFILE_URL}) · 时间为北京时间 (UTC+8)",
-        "",
-    ]
-
-    # Year index
-    if len(sorted_years) > 1:
-        lines.append('<div class="thoughts-index">')
-        lines.append("📋 目录")
-        for year in sorted_years:
-            lines.append(f'- [{year} 年](#{year})')
-        lines.append("</div>")
-        lines.append("")
-
-    # Posts by year
+    # Generate per-year pages
     for year in sorted_years:
-        lines.append(f"## {year}")
-        lines.append("")
+        page = make_year_page(year, years[year])
+        path = os.path.join(OUTPUT_DIR, f"{year}.md")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(page)
+        print(f"Generated {path}")
 
-        for created_at, text, post, record in posts:
-            if extract_year(created_at) != year:
-                continue
-
-            lines.append(f"### {format_time(created_at)}")
-            lines.append("")
-            lines.append('<div class="thought-card">')
-            lines.append(f'<div class="thought-text">{html.escape(text)}</div>')
-
-            embed = post.get("embed") or record.get("embed")
-            if embed:
-                etype = embed.get("$type", "")
-                if "images" in etype:
-                    img_tags = []
-                    for img in embed.get("images", []):
-                        src = img.get("fullsize", "")
-                        alt = img.get("alt", "")
-                        if src:
-                            img_tags.append(f'  <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
-                    if img_tags:
-                        lines.append('  <div class="thought-images">')
-                        lines.extend(img_tags)
-                        lines.append("  </div>")
-                elif "external" in etype:
-                    ext = embed.get("external", {})
-                    uri = ext.get("uri", "")
-                    title = ext.get("title", "")
-                    if uri:
-                        lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
-
-            lines.append("</div>")
-            lines.append("")
-
-    lines.extend([
-        '<div class="thoughts-footer">',
-        "更多想法请关注我的 ",
-        f"[Bluesky]({BLUESKY_PROFILE_URL})",
-        "</div>",
-    ])
-
-    return "\n".join(lines)
-
-
-def _error_page(message):
-    return "\n".join([
-        "# 碎碎念",
-        "",
-        f">{message}",
-    ])
-
-
-def main():
-    os.makedirs(os.path.dirname(OUTPUT), exist_ok=True)
-    data = fetch_feed()
-    page = build_page(data)
-    with open(OUTPUT, "w", encoding="utf-8") as f:
-        f.write(page)
-    print(f"Generated {OUTPUT}")
+    # Generate index (landing) page
+    index_page = make_index_page(sorted_years, posts)
+    with open(os.path.join(OUTPUT_DIR, "index.md"), "w", encoding="utf-8") as f:
+        f.write(index_page)
+    print("Generated docs/thoughts/index.md")
 
 
 if __name__ == "__main__":
