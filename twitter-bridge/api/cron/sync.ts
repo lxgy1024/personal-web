@@ -51,6 +51,32 @@ async function triggerRebuild(): Promise<void> {
   }
 }
 
+/** Trigger the next sync-twitter workflow run via workflow_dispatch (self-chaining). */
+async function triggerNextSync(): Promise<void> {
+  if (!GITHUB_PAT) {
+    console.warn('[nextsync] No GITHUB_PAT set — skipping self-trigger');
+    return;
+  }
+  const res = await fetch(
+    `https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/sync-twitter.yml/dispatches`,
+    {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${GITHUB_PAT}`,
+        'user-agent': 'twitter-bsky-bridge/1.0',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({ ref: 'main' }),
+    },
+  );
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    console.warn(`[nextsync] Self-trigger failed (${res.status}): ${body.slice(0, 200)}`);
+  } else {
+    console.log('[nextsync] Next sync run dispatched');
+  }
+}
+
 export default async function handler(req: any, res: any) {
   // Support both Vercel Cron (no auth check) and direct calls
   if (req.method !== 'GET') {
@@ -164,9 +190,10 @@ export default async function handler(req: any, res: any) {
     console.error('[sync] Fatal:', e.message);
   }
 
-  // ========== 4. Trigger site rebuild if sync had any activity ==========
+  // ========== 4. Trigger site rebuild + next sync ==========
   if (synced > 0 || errors.length === 0) {
     await triggerRebuild();
+    await triggerNextSync();
   }
 
   // Partial success (some tweets posted, some failed) still returns 200

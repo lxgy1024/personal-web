@@ -1,8 +1,9 @@
 name: Twitter → Bluesky Sync
 
 on:
+  # Fallback: 每小时触发一次，自触发链提供 ~3 分钟间隔
   schedule:
-    - cron: "*/3 * * * *"
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 jobs:
