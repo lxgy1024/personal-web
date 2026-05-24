@@ -179,7 +179,7 @@ export default async function handler(req: any, res: any) {
           text: rt.text,
           facets: rt.facets,
           embed,
-          createdAt: tweet.timeParsed?.toISOString() ?? new Date().toISOString(),
+          createdAt: new Date().toISOString(),
         });
 
         synced++;
