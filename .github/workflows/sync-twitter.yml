@@ -6,6 +6,10 @@ on:
     - cron: "0 * * * *"
   workflow_dispatch:
 
+concurrency:
+  group: sync-twitter
+  cancel-in-progress: false
+
 jobs:
   trigger-bridge:
     runs-on: ubuntu-latest
@@ -21,3 +25,5 @@ jobs:
             exit 1
           fi
           echo "Synced $synced tweets"
+      - name: Wait for next cycle (~3 min interval)
+        run: sleep 175

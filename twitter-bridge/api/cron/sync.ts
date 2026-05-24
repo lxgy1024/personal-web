@@ -190,10 +190,14 @@ export default async function handler(req: any, res: any) {
     console.error('[sync] Fatal:', e.message);
   }
 
-  // ========== 4. Trigger site rebuild + next sync ==========
+  // ========== 4. Trigger next sync (keep self-chain alive) ==========
   if (synced > 0 || errors.length === 0) {
-    await triggerRebuild();
     await triggerNextSync();
+  }
+
+  // ========== 5. Trigger site rebuild only if new content ==========
+  if (synced > 0) {
+    await triggerRebuild();
   }
 
   // Partial success (some tweets posted, some failed) still returns 200
