@@ -84,7 +84,7 @@ export default async function handler(req: any, res: any) {
       }
 
       try {
-        const postText = `${tweet.text}\n\nhttps://x.com/${TWITTER_USERNAME}/status/${tweet.id}`;
+        const postText = tweet.text;
         const rt = new RichText({ text: postText });
         await rt.detectFacets(agent);
 
