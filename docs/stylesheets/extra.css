@@ -65,19 +65,17 @@
 .hero-cards a {
   display: block;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
+  background: transparent;
   border-radius: 12px;
-  color: #fff !important;
+  color: inherit !important;
   text-align: center;
   text-decoration: none !important;
   transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid transparent;
 }
 .hero-cards a:hover {
-  background: rgba(255, 255, 255, 0.35);
+  background: rgba(128, 128, 128, 0.06);
   transform: translateY(-4px);
-  color: #fff !important;
 }
 .hero-cards .card-title {
   font-size: 1rem;
@@ -85,7 +83,7 @@
 }
 .hero-cards .card-desc {
   font-size: 0.8rem;
-  opacity: 0.85;
+  opacity: 0.7;
 }
 
 /* === 分类页卡片 === */
