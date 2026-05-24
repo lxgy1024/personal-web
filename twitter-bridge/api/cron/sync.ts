@@ -139,7 +139,11 @@ export default async function handler(req: any, res: any) {
       }
 
       try {
-        const postText = tweet.text;
+        // Append tweet URL for dedup (extractTweetIds finds it on next run)
+        const tweetUrl = `\n\nhttps://x.com/${TWITTER_USERNAME}/status/${tweet.id}`;
+        const postText = (tweet.text + tweetUrl).length <= 300
+          ? tweet.text + tweetUrl
+          : tweet.text.slice(0, 300 - tweetUrl.length) + tweetUrl;
         const rt = new RichText({ text: postText });
         await rt.detectFacets(agent);
 
