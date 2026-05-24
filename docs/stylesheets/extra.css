@@ -33,57 +33,41 @@
   color: #ec4899 !important; /* pink-500 */
 }
 
-/* === 首页 Hero === */
-.hero-section {
-  text-align: center;
-  padding: 3rem 1rem 2rem;
-  margin: -1.6rem -1.6rem 2rem;
-  background: linear-gradient(135deg, #4facfe 0%, #f093fb 100%);
-  border-radius: 0 0 24px 24px;
-  color: #fff;
-}
-.hero-section h1 {
-  color: #fff !important;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-.hero-section .hero-tagline {
-  font-size: 1.1rem;
-  opacity: 0.9;
-  margin-bottom: 2rem;
-}
-
-/* Hero 入口卡片 */
-.hero-cards {
+/* === 首页入口卡片（非 Hero 样式） === */
+.home-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 1rem;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 1rem 0 2rem;
 }
-.hero-cards a {
-  display: block;
-  padding: 1rem;
-  background: transparent;
+.home-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.2rem 1.5rem;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  color: inherit !important;
-  text-align: center;
+  background: var(--md-default-bg-color);
   text-decoration: none !important;
-  transition: all 0.3s ease;
-  border: 1px solid transparent;
+  transition: all 0.25s ease;
 }
-.hero-cards a:hover {
-  background: rgba(128, 128, 128, 0.06);
+.home-card:hover {
+  box-shadow: 0 4px 20px rgba(79, 172, 254, 0.10), 0 2px 6px rgba(240, 147, 251, 0.06);
   transform: translateY(-4px);
 }
-.hero-cards .card-title {
+.home-card-title {
   font-size: 1rem;
   font-weight: 600;
+  color: var(--md-typeset-color);
 }
-.hero-cards .card-desc {
-  font-size: 0.8rem;
-  opacity: 0.7;
+.home-card-desc {
+  font-size: 0.85rem;
+  color: var(--md-typeset-color);
+  opacity: 0.65;
+}
+[data-md-color-scheme="slate"] .home-card {
+  border-color: #334155;
 }
 
 /* === 分类页卡片 === */

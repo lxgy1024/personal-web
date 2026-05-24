@@ -1,27 +1,21 @@
-<div class="hero-section" markdown>
-
 # 你好，我是赶月喵
 
-<p class="hero-tagline">OIer · MtF · 二次元爱好者 · 数学物理大好き</p>
+<div class="home-cards">
 
-<div class="hero-cards">
-
-<a href="blog/">
-  <div class="card-title">📝 博客</div>
-  <div class="card-desc">8 篇文章</div>
+<a href="blog/" class="home-card">
+  <span class="home-card-title">📝 博客</span>
+  <span class="home-card-desc">8 篇文章</span>
 </a>
 
-<a href="projects/">
-  <div class="card-title">💻 项目</div>
-  <div class="card-desc">2 个项目</div>
+<a href="projects/" class="home-card">
+  <span class="home-card-title">💻 项目</span>
+  <span class="home-card-desc">2 个项目</span>
 </a>
 
-<a href="https://github.com/lxgy1024">
-  <div class="card-title">🐙 GitHub</div>
-  <div class="card-desc">开源代码</div>
+<a href="https://github.com/lxgy1024" class="home-card">
+  <span class="home-card-title">🐙 GitHub</span>
+  <span class="home-card-desc">开源代码</span>
 </a>
-
-</div>
 
 </div>
 
