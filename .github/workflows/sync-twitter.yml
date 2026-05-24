@@ -1,14 +1,9 @@
 name: Twitter → Bluesky Sync
 
 on:
-  # Fallback: 每小时触发一次，自触发链提供 ~3 分钟间隔
   schedule:
     - cron: "0 * * * *"
   workflow_dispatch:
-
-concurrency:
-  group: sync-twitter
-  cancel-in-progress: false
 
 jobs:
   trigger-bridge:
@@ -16,7 +11,7 @@ jobs:
     steps:
       - name: Call Vercel sync function
         run: |
-          response=$(curl -sS "https://twitter-bridge-eight.vercel.app/api/cron/sync" --max-time 30)
+          response=$(curl -sS "https://twitter-bridge-eight.vercel.app/api/cron/sync" --max-time 60)
           echo "Response: $response"
           synced=$(echo "$response" | jq -r '.synced // 0')
           errors=$(echo "$response" | jq -r '.errors | join("; ")' 2>/dev/null || echo "")
@@ -27,3 +22,11 @@ jobs:
           echo "Synced $synced tweets"
       - name: Wait for next cycle (~3 min interval)
         run: sleep 175
+      - name: Trigger next sync run
+        run: |
+          curl -sS -X POST \
+            "https://api.github.com/repos/lxgy1024/personal-web/actions/workflows/sync-twitter.yml/dispatches" \
+            -H "Authorization: Bearer ${{ secrets.BRIDGE_PAT }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Content-Type: application/json" \
+            -d '{"ref":"main"}'
