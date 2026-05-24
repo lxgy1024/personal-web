@@ -51,34 +51,6 @@ async function triggerRebuild(): Promise<void> {
   }
 }
 
-/** Trigger the next sync-twitter run via workflow_dispatch. */
-async function triggerNextSync(): Promise<void> {
-  if (!GITHUB_PAT) {
-    console.warn('[nextsync] No GITHUB_PAT set — skipping self-trigger');
-    return;
-  }
-  const res = await fetch(
-    `https://api.github.com/repos/${GITHUB_REPO}/actions/workflows/sync-twitter.yml/dispatches`,
-    {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${GITHUB_PAT}`,
-        'user-agent': 'twitter-bsky-bridge/1.0',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({ ref: 'main' }),
-    },
-  );
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    console.warn(`[nextsync] Self-trigger failed (${res.status}): ${body.slice(0, 200)}`);
-  } else {
-    console.log('[nextsync] Next sync run dispatched');
-  }
-}
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
 export default async function handler(req: any, res: any) {
   // Support both Vercel Cron (no auth check) and direct calls
   if (req.method !== 'GET') {
@@ -200,11 +172,6 @@ export default async function handler(req: any, res: any) {
   if (synced > 0) {
     await triggerRebuild();
   }
-
-  // ========== 5. Wait ~3 min then dispatch next sync ==========
-  console.log('[sync] Waiting 175s before next cycle...');
-  await sleep(175000);
-  await triggerNextSync();
 
   // Partial success (some tweets posted, some failed) still returns 200
   const status = errors.length > 0 && synced === 0 ? 500 : 200;

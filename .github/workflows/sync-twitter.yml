@@ -1,8 +1,9 @@
 name: Twitter → Bluesky Sync
 
 on:
+  # Fallback only — primary scheduler is cron-job.org (every 3 min)
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 */6 * * *"
   workflow_dispatch:
 
 jobs:
@@ -11,7 +12,7 @@ jobs:
     steps:
       - name: Call Vercel sync function
         run: |
-          response=$(curl -sS "https://twitter-bridge-eight.vercel.app/api/cron/sync" --max-time 200)
+          response=$(curl -sS "https://twitter-bridge-eight.vercel.app/api/cron/sync" --max-time 30)
           echo "Response: $response"
           synced=$(echo "$response" | jq -r '.synced // 0')
           errors=$(echo "$response" | jq -r '.errors | join("; ")' 2>/dev/null || echo "")
