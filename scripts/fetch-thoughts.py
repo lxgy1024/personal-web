@@ -51,6 +51,16 @@ def extract_year(iso_str):
         return None
 
 
+def strip_twitter_url(text: str) -> str:
+    """Remove trailing x.com/twitter.com URLs added by the sync bridge."""
+    import re
+    return re.sub(
+        r'\n+https?://(?:twitter|x)\.com/\w+/status/\d+\s*$',
+        '',
+        text,
+    ).rstrip()
+
+
 def render_post(created_at, text, post, record):
     """Render a single thought post as markdown lines."""
     lines = []
@@ -162,8 +172,9 @@ def main():
         print("Generated docs/thoughts/index.md (empty)")
         return
 
-    # Collect posts
+    # Collect posts with text-based dedup (prefer original Bluesky posts)
     posts = []
+    seen = {}  # normalized_text -> index in posts
     for item in feed:
         post = item.get("post", {})
         record = post.get("record", {})
@@ -171,6 +182,16 @@ def main():
         created_at = record.get("createdAt", "")
         if not text:
             continue
+        normalized = strip_twitter_url(text)
+        has_sync_url = text != normalized
+        if normalized in seen:
+            # If existing entry is a synced copy and this one is original, replace
+            existing_idx = seen[normalized]
+            existing_text = posts[existing_idx][1]
+            if strip_twitter_url(existing_text) != existing_text and not has_sync_url:
+                posts[existing_idx] = (created_at, text, post, record)
+            continue
+        seen[normalized] = len(posts)
         posts.append((created_at, text, post, record))
 
     # Group by year
