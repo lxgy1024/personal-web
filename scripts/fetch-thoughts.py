@@ -194,6 +194,9 @@ def main():
         seen[normalized] = len(posts)
         posts.append((created_at, text, post, record))
 
+    # Sort by createdAt descending (newest first), since dedup can disrupt API order
+    posts.sort(key=lambda p: p[0], reverse=True)
+
     # Group by year
     years = {}
     for created_at, text, post, record in posts:
