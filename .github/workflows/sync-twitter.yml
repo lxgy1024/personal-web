@@ -8,15 +8,33 @@ on:
 jobs:
   trigger-bridge:
     runs-on: ubuntu-latest
+    outputs:
+      synced: ${{ steps.sync.outputs.synced }}
     steps:
       - name: Call Vercel sync function
+        id: sync
         run: |
           response=$(curl -sS "https://twitter-bridge-eight.vercel.app/api/cron/sync" --max-time 30)
           echo "Response: $response"
           synced=$(echo "$response" | jq -r '.synced // 0')
           errors=$(echo "$response" | jq -r '.errors | join("; ")' 2>/dev/null || echo "")
+          echo "synced=$synced" >> "$GITHUB_OUTPUT"
           if [ "$synced" = "0" ] && [ -n "$errors" ]; then
             echo "::error::Sync failed: $errors"
             exit 1
           fi
           echo "Synced $synced tweets"
+
+  trigger-build:
+    needs: trigger-bridge
+    if: needs.trigger-bridge.outputs.synced != '0'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
+    steps:
+      - name: Trigger website rebuild
+        run: |
+          gh workflow run ci.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}

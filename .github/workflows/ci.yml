@@ -5,6 +5,10 @@ on:
     branches:
       - main
   pull_request:
+  schedule:
+    # 每天 UTC 1:57 ≈ 北京时间 09:57，兜底构建
+    - cron: "57 1 * * *"
+  workflow_dispatch:
 
 permissions:
   contents: read
