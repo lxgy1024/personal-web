@@ -106,32 +106,70 @@ function extractTweetsFromTimeline(
  * Fetch recent tweets for a user using Twitter's internal GraphQL API.
  * Requires valid auth_token and ct0 cookies from a logged-in browser session.
  */
+const USER_BY_SCREEN_NAME_QUERY_ID = 'G3KGOASz96M-Qu0nwmGXNg';
+const USER_BY_SCREEN_NAME_FEATURES = {
+  hidden_profile_likes_enabled: false,
+  hidden_profile_subscriptions_enabled: false,
+  responsive_web_graphql_exclude_directive_enabled: true,
+  verified_phone_label_enabled: false,
+  subscriptions_verification_info_is_identity_verified_enabled: false,
+  subscriptions_verification_info_verified_since_enabled: true,
+  highlights_tweets_tab_ui_enabled: true,
+  creator_subscriptions_tweet_preview_api_enabled: true,
+  responsive_web_graphql_skip_user_profile_image_extensions_enabled: false,
+  responsive_web_graphql_timeline_navigation_enabled: true,
+};
+
+/** Resolve a Twitter screen name to a user ID via the GraphQL API. */
+async function resolveUserId(
+  username: string,
+  authToken: string,
+  ct0: string,
+): Promise<string> {
+  const headers = authHeaders(authToken, ct0);
+
+  const params = new URLSearchParams({
+    variables: JSON.stringify({
+      screen_name: username,
+      withSafetyModeUserFields: true,
+    }),
+    features: JSON.stringify(USER_BY_SCREEN_NAME_FEATURES),
+    fieldToggles: JSON.stringify({ withAuxiliaryUserLabels: false }),
+  });
+
+  const res = await fetch(
+    `https://twitter.com/i/api/graphql/${USER_BY_SCREEN_NAME_QUERY_ID}/UserByScreenName?${params}`,
+    { headers },
+  );
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    const hint =
+      res.status === 401
+        ? ' — Twitter cookies may have expired. Renew: F12 → Application → Cookies → twitter.com → copy auth_token and ct0'
+        : '';
+    throw new Error(
+      `Twitter user lookup failed (${res.status})${hint}: ${body.slice(0, 200)}`,
+    );
+  }
+  const data: any = await res.json();
+  const errors = data?.errors;
+  if (errors?.length) {
+    throw new Error(`Twitter user lookup error: ${errors[0].message}`);
+  }
+  const userId: string = data?.data?.user?.result?.rest_id;
+  if (!userId) throw new Error('Could not resolve user ID from GraphQL response');
+  return userId;
+}
+
 export async function fetchUserTweets(
   username: string,
   count: number,
   authToken: string,
   ct0: string,
 ): Promise<Tweet[]> {
+  // Step 1: resolve screen_name → user ID via GraphQL
+  const userId = await resolveUserId(username, authToken, ct0);
   const headers = authHeaders(authToken, ct0);
-
-  // Step 1: resolve screen_name → user ID
-  const userRes = await fetch(
-    `https://api.twitter.com/1.1/users/show.json?screen_name=${encodeURIComponent(username)}`,
-    { headers },
-  );
-  if (!userRes.ok) {
-    const body = await userRes.text().catch(() => '');
-    const hint =
-      userRes.status === 401
-        ? ' — Twitter cookies may have expired. Renew: F12 → Application → Cookies → twitter.com → copy auth_token and ct0'
-        : '';
-    throw new Error(
-      `Twitter user lookup failed (${userRes.status})${hint}: ${body.slice(0, 200)}`,
-    );
-  }
-  const userData: any = await userRes.json();
-  const userId: string = userData.id_str;
-  if (!userId) throw new Error('Could not resolve user ID');
 
   // Step 2: fetch UserTweets timeline via GraphQL
   const variables = {
