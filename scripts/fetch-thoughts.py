@@ -5,7 +5,7 @@ import json
 import os
 import urllib.request
 import urllib.error
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 BLUESKY_HANDLE = "lxgy1024.bsky.social"
 BLUESKY_PROFILE_URL = f"https://bsky.app/profile/{BLUESKY_HANDLE}"
@@ -14,6 +14,7 @@ PRIMARY_HOST = "https://public.api.bsky.app"
 FALLBACK_HOST = "https://api.bsky.app"
 MAX_POSTS = 50
 OUTPUT = "docs/thoughts.md"
+CST = timezone(timedelta(hours=8), "CST")
 
 
 def _do_request(url):
@@ -36,9 +37,18 @@ def fetch_feed():
 def format_time(iso_str):
     try:
         dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
-        return dt.strftime("%Y-%m-%d %H:%M")
+        cst = dt.astimezone(CST)
+        return cst.strftime("%Y-%m-%d %H:%M")
     except (ValueError, AttributeError):
         return iso_str
+
+
+def extract_year(iso_str):
+    try:
+        dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+        return str(dt.astimezone(CST).year)
+    except (ValueError, AttributeError):
+        return None
 
 
 def build_page(data):
@@ -49,13 +59,8 @@ def build_page(data):
     if not feed:
         return _error_page("还没有碎碎念～")
 
-    lines = [
-        "# 碎碎念",
-        "",
-        f"同步自 [Bluesky]({BLUESKY_PROFILE_URL})",
-        "",
-    ]
-
+    # Collect and group posts by year
+    posts = []
     for item in feed:
         post = item.get("post", {})
         record = post.get("record", {})
@@ -63,35 +68,70 @@ def build_page(data):
         created_at = record.get("createdAt", "")
         if not text:
             continue
+        posts.append((created_at, text, post, record))
 
-        lines.append(f"### {format_time(created_at)}")
-        lines.append("")
-        lines.append('<div class="thought-card">')
-        lines.append(f'<div class="thought-text">{html.escape(text)}</div>')
+    # Group by year (Beijing time)
+    years = {}
+    for created_at, text, post, record in posts:
+        year = extract_year(created_at) or "未知"
+        years.setdefault(year, []).append((created_at, text, post, record))
 
-        embed = post.get("embed") or record.get("embed")
-        if embed:
-            etype = embed.get("$type", "")
-            if "images" in etype:
-                img_tags = []
-                for img in embed.get("images", []):
-                    src = img.get("fullsize", "")
-                    alt = img.get("alt", "")
-                    if src:
-                        img_tags.append(f'  <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
-                if img_tags:
-                    lines.append('  <div class="thought-images">')
-                    lines.extend(img_tags)
-                    lines.append("  </div>")
-            elif "external" in etype:
-                ext = embed.get("external", {})
-                uri = ext.get("uri", "")
-                title = ext.get("title", "")
-                if uri:
-                    lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
+    # Sort years descending
+    sorted_years = sorted(years.keys(), reverse=True)
 
+    lines = [
+        "# 碎碎念",
+        "",
+        f"同步自 [Bluesky]({BLUESKY_PROFILE_URL}) · 时间为北京时间 (UTC+8)",
+        "",
+    ]
+
+    # Year index
+    if len(sorted_years) > 1:
+        lines.append('<div class="thoughts-index">')
+        lines.append("📋 目录")
+        for year in sorted_years:
+            lines.append(f'- [{year} 年](#{year})')
         lines.append("</div>")
         lines.append("")
+
+    # Posts by year
+    for year in sorted_years:
+        lines.append(f"## {year}")
+        lines.append("")
+
+        for created_at, text, post, record in posts:
+            if extract_year(created_at) != year:
+                continue
+
+            lines.append(f"### {format_time(created_at)}")
+            lines.append("")
+            lines.append('<div class="thought-card">')
+            lines.append(f'<div class="thought-text">{html.escape(text)}</div>')
+
+            embed = post.get("embed") or record.get("embed")
+            if embed:
+                etype = embed.get("$type", "")
+                if "images" in etype:
+                    img_tags = []
+                    for img in embed.get("images", []):
+                        src = img.get("fullsize", "")
+                        alt = img.get("alt", "")
+                        if src:
+                            img_tags.append(f'  <img src="{html.escape(src)}" alt="{html.escape(alt)}" loading="lazy">')
+                    if img_tags:
+                        lines.append('  <div class="thought-images">')
+                        lines.extend(img_tags)
+                        lines.append("  </div>")
+                elif "external" in etype:
+                    ext = embed.get("external", {})
+                    uri = ext.get("uri", "")
+                    title = ext.get("title", "")
+                    if uri:
+                        lines.append(f'  <div class="thought-link"><a href="{html.escape(uri)}" target="_blank" rel="noopener">{html.escape(title) or html.escape(uri)}</a></div>')
+
+            lines.append("</div>")
+            lines.append("")
 
     lines.extend([
         '<div class="thoughts-footer">',
