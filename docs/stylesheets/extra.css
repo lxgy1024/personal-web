@@ -77,7 +77,7 @@
   margin-bottom: 1rem;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  background: #fff;
+  background: #fef6f8; /* 极淡粉色 */
   transition: all 0.3s ease;
   text-decoration: none !important;
   color: inherit !important;
@@ -107,7 +107,7 @@
   font-size: 0.8rem;
 }
 [data-md-color-scheme="slate"] .category-card {
-  background: #1e293b;
+  background: #263445;
   border-color: #334155;
 }
 [data-md-color-scheme="slate"] .category-card .card-title {
@@ -164,6 +164,7 @@
 .md-typeset .grid.cards > li {
   transition: all 0.3s ease;
   border-color: #e2e8f0;
+  background: #fef6f8;
 }
 .md-typeset .grid.cards > ol > li:hover,
 .md-typeset .grid.cards > ul > li:hover,
@@ -174,7 +175,7 @@
 [data-md-color-scheme="slate"] .md-typeset .grid.cards > ol > li,
 [data-md-color-scheme="slate"] .md-typeset .grid.cards > ul > li,
 [data-md-color-scheme="slate"] .md-typeset .grid.cards > li {
-  background: #1e293b;
+  background: #263445;
   border-color: #334155;
 }
 
@@ -300,7 +301,7 @@
   padding: 1.5rem 1rem;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  background: #fff;
+  background: #fef6f8;
   transition: all 0.3s ease;
   text-decoration: none !important;
   color: inherit !important;
@@ -336,7 +337,7 @@ a.social-card {
   line-height: 1.5;
 }
 [data-md-color-scheme="slate"] .social-card {
-  background: #1e293b;
+  background: #263445;
   border-color: #334155;
 }
 [data-md-color-scheme="slate"] .social-card .social-name {
@@ -420,7 +421,7 @@ a.social-card {
   margin-bottom: 1rem;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  background: #fff;
+  background: #fef6f8;
   transition: all 0.3s ease;
 }
 .thought-card:hover {
@@ -464,7 +465,7 @@ a.social-card {
 
 /* 暗色模式适配 */
 [data-md-color-scheme="slate"] .thought-card {
-  background: #1e293b;
+  background: #263445;
   border-color: #334155;
 }
 [data-md-color-scheme="slate"] .thought-text {
