@@ -5,4 +5,5 @@ __pycache__/
 docs/superpowers/
 docs/thoughts/
 .claude/settings.local.json
+.env*
 
