@@ -78,7 +78,8 @@ function extractTweetsFromTimeline(
       const createdAt = legacy.created_at ?? '';
 
       // Skip retweets, replies, and quote tweets
-      if (legacy.retweeted_status) continue;
+      // Note: Twitter GraphQL uses retweeted_status_result (not retweeted_status)
+      if (legacy.retweeted_status_result || legacy.retweeted_status) continue;
       if (legacy.in_reply_to_status_id_str) continue;
       if (legacy.is_quote_status) continue;
 
