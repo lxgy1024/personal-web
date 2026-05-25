@@ -48,21 +48,77 @@ function extractTweetIds(text: string, username: string): string[] {
 }
 
 /**
- * Extract dedup markers (​<id>​) from text.
- * These invisible zero-width markers are appended to posts for dedup
- * without visible content on Bluesky.
+ * Invisible character encoding for dedup markers.
+ *
+ * Uses 4 zero-width characters as a base-4 digit set, so the entire tweet ID
+ * is encoded as a sequence of completely invisible characters.
+ *
+ * Encoding map (base-4 digit → invisible char):
+ *   0 → U+200B (ZERO WIDTH SPACE)
+ *   1 → U+200C (ZERO WIDTH NON-JOINER)
+ *   2 → U+200D (ZERO WIDTH JOINER)
+ *   3 → U+FEFF (ZERO WIDTH NO-BREAK SPACE / BYTE ORDER MARK)
  */
-function extractDedupMarkers(text: string): string[] {
-  const pattern = /​(\d+)​/g;
-  return [...text.matchAll(pattern)].map((m) => m[1]);
+const INVISIBLE_DIGITS = ['​', '‌', '‍', '﻿'] as const;
+const INVISIBLE_DECODE: Record<string, number> = {
+  '​': 0,
+  '‌': 1,
+  '‍': 2,
+  '﻿': 3,
+};
+
+function dedupMarker(tweetId: string): string {
+  // Convert decimal tweet ID to base-4, map each digit to invisible char
+  let n = BigInt(tweetId);
+  if (n === 0n) return INVISIBLE_DIGITS[0];
+  const digits: number[] = [];
+  while (n > 0n) {
+    digits.push(Number(n % 4n));
+    n /= 4n;
+  }
+  return digits.reverse().map((d) => INVISIBLE_DIGITS[d]).join('');
 }
 
-/**
- * Build a dedup marker string: invisible zero-width spaces wrapping the tweet ID.
- * This marker is invisible in Bluesky's UI but readable in the AT Protocol record.
- */
-function dedupMarker(tweetId: string): string {
-  return `​${tweetId}​`;
+function extractDedupMarkers(text: string): string[] {
+  // Scan for invisible-only markers (new format): consecutive invisible chars
+  const ids: string[] = [];
+  let current: number[] = [];
+  let inMarker = false;
+
+  for (const c of text) {
+    const val = INVISIBLE_DECODE[c];
+    if (val !== undefined) {
+      current.push(val);
+      inMarker = true;
+    } else if (inMarker) {
+      // End of an invisible-only marker sequence — decode from base-4
+      if (current.length > 0) {
+        let id = 0n;
+        for (const d of current) {
+          id = id * 4n + BigInt(d);
+        }
+        ids.push(id.toString());
+        current = [];
+      }
+      inMarker = false;
+    }
+  }
+  // Handle marker at end of text
+  if (current.length > 0) {
+    let id = 0n;
+    for (const d of current) {
+      id = id * 4n + BigInt(d);
+    }
+    ids.push(id.toString());
+  }
+
+  // Also scan for old-format markers (​<digits>​) for backward compat
+  const oldPattern = /​(\d+)​/g;
+  for (const m of text.matchAll(oldPattern)) {
+    ids.push(m[1]);
+  }
+
+  return ids;
 }
 
 export default async function handler(req: any, res: any) {

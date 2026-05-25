@@ -52,10 +52,19 @@ def extract_year(iso_str):
 
 
 def strip_dedup_marker(text: str) -> str:
-    """Remove invisible dedup markers from text."""
+    """Remove invisible dedup markers from text.
+
+    Handles both:
+      - Old format: ​<digits>​ (zero-width space wrapping tweet ID)
+      - New format: consecutive zero-width chars only (base-4 encoded tweet ID)
+    """
     import re
-    # Match zero-width space (​) wrapping tweet IDs: ​<digits>​
-    return re.sub('​\\d+​', '', text)
+    # Old format: zero-width space wrapping tweet ID digits
+    text = re.sub('​\\d+​', '', text)
+    # New format: strip all zero-width / invisible marker characters
+    # (ZWS, ZWNJ, ZWJ, ZWNBSP) — these are the invisible digit set
+    text = re.sub('[​‌‍﻿]', '', text)
+    return text
 
 
 def strip_twitter_url(text: str) -> str:

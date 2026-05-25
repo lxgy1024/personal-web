@@ -56,6 +56,20 @@ function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+/** Invisible-only dedup marker: encode tweet ID as base-4 using zero-width characters. */
+const INVISIBLE_DIGITS = ['​', '‌', '‍', '﻿'];
+
+function dedupMarker(tweetId) {
+  let n = BigInt(tweetId);
+  if (n === 0n) return INVISIBLE_DIGITS[0];
+  const digits = [];
+  while (n > 0n) {
+    digits.push(Number(n % 4n));
+    n /= 4n;
+  }
+  return digits.reverse().map((d) => INVISIBLE_DIGITS[d]).join('');
+}
+
 async function main() {
   console.log('=== Connecting to Bluesky ===');
   const agent = new AtpAgent({ service: 'https://bsky.social' });
@@ -114,8 +128,8 @@ async function main() {
 
   for (const tweet of tweets) {
     try {
-      // Append invisible dedup marker
-      const marker = `​${tweet.id}​`;
+      // Append invisible-only dedup marker (no visible characters)
+      const marker = dedupMarker(tweet.id);
       const maxLen = 300;
       const rawText = tweet.text;
       const trimmedText =
