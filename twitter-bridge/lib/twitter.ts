@@ -77,9 +77,10 @@ function extractTweetsFromTimeline(
       const text = legacy.full_text ?? '';
       const createdAt = legacy.created_at ?? '';
 
-      // Skip retweets and replies
+      // Skip retweets, replies, and quote tweets
       if (legacy.retweeted_status) continue;
       if (legacy.in_reply_to_status_id_str) continue;
+      if (legacy.is_quote_status) continue;
 
       // Extract photos from extended_entities
       const photos: Array<{ url: string }> = [];
