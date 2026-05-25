@@ -12,19 +12,6 @@ const {
 
 const GITHUB_REPO = 'lxgy1024/personal-web';
 
-/** Regex to find original tweet links in Bluesky post text. */
-function buildTweetUrlPattern(username: string): RegExp {
-  return new RegExp(
-    `https?://(?:twitter|x)\\.com/${username}/status/(\\d+)`,
-    'gi',
-  );
-}
-
-function extractTweetIds(text: string, username: string): string[] {
-  const pattern = buildTweetUrlPattern(username);
-  return [...text.matchAll(pattern)].map((m) => m[1]);
-}
-
 /** Trigger GitHub Actions rebuild via workflow_dispatch. */
 async function triggerRebuild(): Promise<void> {
   if (!GITHUB_PAT) {
@@ -51,8 +38,34 @@ async function triggerRebuild(): Promise<void> {
   }
 }
 
+/** Extract tweet IDs from text URLs. */
+function extractTweetIds(text: string, username: string): string[] {
+  const pattern = new RegExp(
+    `https?://(?:twitter|x)\\.com/${username}/status/(\\d+)`,
+    'gi',
+  );
+  return [...text.matchAll(pattern)].map((m) => m[1]);
+}
+
+/**
+ * Extract dedup markers (​<id>​) from text.
+ * These invisible zero-width markers are appended to posts for dedup
+ * without visible content on Bluesky.
+ */
+function extractDedupMarkers(text: string): string[] {
+  const pattern = /​(\d+)​/g;
+  return [...text.matchAll(pattern)].map((m) => m[1]);
+}
+
+/**
+ * Build a dedup marker string: invisible zero-width spaces wrapping the tweet ID.
+ * This marker is invisible in Bluesky's UI but readable in the AT Protocol record.
+ */
+function dedupMarker(tweetId: string): string {
+  return `​${tweetId}​`;
+}
+
 export default async function handler(req: any, res: any) {
-  // Support both Vercel Cron (no auth check) and direct calls
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -63,7 +76,7 @@ export default async function handler(req: any, res: any) {
   try {
     // ========== 1. Twitter: fetch recent tweets ==========
     if (!TWITTER_AUTH_TOKEN) throw new Error('Missing TWITTER_AUTH_TOKEN');
-    if (!TWITTER_CT0) throw new Error('Missing TWITTER_CT0 — ct0 is required for GraphQL auth');
+    if (!TWITTER_CT0) throw new Error('Missing TWITTER_CT0');
     if (!TWITTER_USERNAME) throw new Error('Missing TWITTER_USERNAME');
 
     console.log(`[sync] Fetching tweets for @${TWITTER_USERNAME} ...`);
@@ -79,17 +92,14 @@ export default async function handler(req: any, res: any) {
 
     console.log(`[sync] Got ${tweets.length} tweets from Twitter`);
 
-    // ========== 2. Bluesky: connect & fetch existing posts ==========
+    // ========== 2. Connect to Bluesky and fetch existing posts for dedup ==========
     if (!BLUESKY_HANDLE) throw new Error('Missing BLUESKY_HANDLE');
     if (!BLUESKY_APP_PASSWORD) throw new Error('Missing BLUESKY_APP_PASSWORD');
 
     console.log(`[sync] Connecting to Bluesky as @${BLUESKY_HANDLE} ...`);
 
     const agent = new AtpAgent({ service: 'https://bsky.social' });
-    await agent.login({
-      identifier: BLUESKY_HANDLE,
-      password: BLUESKY_APP_PASSWORD,
-    });
+    await agent.login({ identifier: BLUESKY_HANDLE, password: BLUESKY_APP_PASSWORD });
 
     const feed = await agent.getAuthorFeed({
       actor: BLUESKY_HANDLE,
@@ -97,27 +107,44 @@ export default async function handler(req: any, res: any) {
       limit: 50,
     });
 
-    // Build set of tweet IDs already on Bluesky (via link facets or text)
+    // Build set of already-synced tweet IDs from:
+    //   A) dedup markers in text (new invisible markers)
+    //   B) Twitter URLs in text (old posts with URL tracking)
+    //   C) embed.external URIs (text-only posts with link cards)
     const alreadySynced = new Set<string>();
     for (const item of feed.data.feed) {
-      const text = (item.post.record as any)?.text || '';
+      const record = item.post.record as any;
+      const text = record?.text || '';
+      // A) New invisible dedup markers
+      extractDedupMarkers(text).forEach((id) => alreadySynced.add(id));
+      // B) Old posts with Twitter URLs in text
       extractTweetIds(text, TWITTER_USERNAME).forEach((id) => alreadySynced.add(id));
+      // C) Text-only posts with link card embeds
+      const embed = record?.embed;
+      if (embed?.$type === 'app.bsky.embed.external') {
+        extractTweetIds(embed.external?.uri || '', TWITTER_USERNAME).forEach((id) => alreadySynced.add(id));
+      }
     }
 
     console.log(`[sync] Found ${alreadySynced.size} already-synced tweets in Bluesky feed`);
 
-    // ========== 3. Post new tweets to Bluesky ==========
+    // ========== 3. Post new tweets to Bluesky with invisible dedup markers ==========
     for (const tweet of tweets) {
       if (alreadySynced.has(tweet.id)) {
         continue;
       }
 
       try {
-        // Append tweet URL for dedup (extractTweetIds finds it on next run)
-        const tweetUrl = `\n\nhttps://x.com/${TWITTER_USERNAME}/status/${tweet.id}`;
-        const postText = (tweet.text + tweetUrl).length <= 300
-          ? tweet.text + tweetUrl
-          : tweet.text.slice(0, 300 - tweetUrl.length) + tweetUrl;
+        // Append invisible dedup marker for reliable future dedup
+        const marker = dedupMarker(tweet.id);
+        const maxLen = 300;
+        const rawText = tweet.text;
+        const trimmedText = rawText.length + marker.length > maxLen
+          ? rawText.slice(0, maxLen - marker.length - 3) + '...'
+          : rawText;
+
+        // The dedup marker is invisible (zero-width spaces), clean text for users
+        const postText = trimmedText + marker;
         const rt = new RichText({ text: postText });
         await rt.detectFacets(agent);
 
@@ -163,17 +190,17 @@ export default async function handler(req: any, res: any) {
         console.error(`[sync] Error posting tweet ${tweet.id}:`, e.message);
       }
     }
+
+    // ========== 4. Trigger rebuild if new content ==========
+    if (synced > 0) {
+      await triggerRebuild();
+    }
   } catch (e: any) {
     errors.push(`Fatal error: ${e.message}`);
     console.error('[sync] Fatal:', e.message);
   }
 
-  // ========== 4. Trigger site rebuild only if new content ==========
-  if (synced > 0) {
-    await triggerRebuild();
-  }
-
-  // Partial success (some tweets posted, some failed) still returns 200
+  // Partial success still returns 200
   const status = errors.length > 0 && synced === 0 ? 500 : 200;
   const body: Record<string, unknown> = { synced };
   if (errors.length > 0) body.errors = errors;

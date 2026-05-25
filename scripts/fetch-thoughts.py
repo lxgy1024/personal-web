@@ -51,6 +51,13 @@ def extract_year(iso_str):
         return None
 
 
+def strip_dedup_marker(text: str) -> str:
+    """Remove invisible dedup markers from text."""
+    import re
+    # Match zero-width space (​) wrapping tweet IDs: ​<digits>​
+    return re.sub('​\\d+​', '', text)
+
+
 def strip_twitter_url(text: str) -> str:
     """Remove trailing x.com/twitter.com URLs added by the sync bridge."""
     import re
@@ -67,7 +74,7 @@ def render_post(created_at, text, post, record):
     lines.append(f"### {format_time(created_at)}")
     lines.append("")
     lines.append('<div class="thought-card">')
-    lines.append(f'<div class="thought-text">{html.escape(text)}</div>')
+    lines.append(f'<div class="thought-text">{html.escape(strip_twitter_url(strip_dedup_marker(text)))}</div>')
 
     embed = post.get("embed") or record.get("embed")
     if embed:
