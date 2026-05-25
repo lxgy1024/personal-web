@@ -60,6 +60,18 @@ function authHeaders(authToken: string, ct0: string): Record<string, string> {
   };
 }
 
+/** Strip trailing t.co media links that Twitter auto-appends to full_text. */
+function stripMediaLinks(text: string, media: Array<{ url?: string }>): string {
+  const urls: string[] = media.map((m) => m.url).filter((u): u is string => !!u);
+  if (urls.length === 0) return text;
+  let cleaned = text;
+  for (const u of urls) {
+    const escaped = u.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    cleaned = cleaned.replace(new RegExp(`\\s*${escaped}\\s*$`), '');
+  }
+  return cleaned.trimEnd();
+}
+
 /** Walk the timeline instruction entries and extract tweet results. */
 function extractTweetsFromTimeline(
   instructions: any[],
@@ -94,7 +106,7 @@ function extractTweetsFromTimeline(
 
       tweets.push({
         id,
-        text,
+        text: stripMediaLinks(text, media),
         timeParsed: createdAt ? new Date(createdAt) : undefined,
         photos: photos.length > 0 ? photos : undefined,
       });

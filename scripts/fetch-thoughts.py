@@ -68,13 +68,16 @@ def strip_dedup_marker(text: str) -> str:
 
 
 def strip_twitter_url(text: str) -> str:
-    """Remove trailing x.com/twitter.com URLs added by the sync bridge."""
+    """Remove trailing x.com/twitter.com URLs and t.co media links."""
     import re
-    return re.sub(
+    text = re.sub(
         r'\n+https?://(?:twitter|x)\.com/\w+/status/\d+\s*$',
         '',
         text,
     ).rstrip()
+    # Strip trailing t.co links (Twitter auto-appends these for media attachments)
+    text = re.sub(r'\s*https://t\.co/\w+\s*$', '', text).rstrip()
+    return text
 
 
 def render_post(created_at, text, post, record):
