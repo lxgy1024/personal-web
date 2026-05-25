@@ -125,12 +125,6 @@ def make_year_page(year, posts):
     for created_at, text, post, record in posts:
         lines.extend(render_post(created_at, text, post, record))
 
-    lines.extend([
-        '<div class="thoughts-footer">',
-        "更多想法请关注我的 ",
-        f"[Bluesky]({BLUESKY_PROFILE_URL})",
-        "</div>",
-    ])
     return "\n".join(lines)
 
 
@@ -151,12 +145,6 @@ def make_index_page(sorted_years, all_posts):
     for created_at, text, post, record in all_posts:
         lines.extend(render_post(created_at, text, post, record))
 
-    lines.extend([
-        '<div class="thoughts-footer">',
-        "更多想法请关注我的 ",
-        f"[Bluesky]({BLUESKY_PROFILE_URL})",
-        "</div>",
-    ])
     return "\n".join(lines)
 
 
