@@ -688,25 +688,26 @@ a.social-card {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  max-width: 800px;
+  gap: 0.75rem;
+  max-width: 700px;
   margin: 0 auto;
 }
 
-.carousel-track {
+.carousel-cards {
   display: flex;
-  overflow: hidden;
-  width: 280px;
-  scroll-behavior: smooth;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex: 1;
 }
 
 .carousel-card {
-  flex: 0 0 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1rem;
+  width: 160px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(124, 161, 255, 0.2);
   border-radius: 16px;
@@ -718,6 +719,19 @@ a.social-card {
   transform: translateY(-4px);
   border-color: rgba(124, 161, 255, 0.5);
   box-shadow: 0 8px 30px rgba(124, 161, 255, 0.15);
+}
+
+.carousel-card.active {
+  width: 190px;
+  transform: scale(1.08);
+  border-color: rgba(124, 161, 255, 0.5);
+  box-shadow: 0 8px 32px rgba(124, 161, 255, 0.25);
+  z-index: 1;
+}
+.carousel-card.active:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 40px rgba(124, 161, 255, 0.35);
+  border-color: rgba(124, 161, 255, 0.7);
 }
 
 .card-icon {
@@ -754,25 +768,6 @@ a.social-card {
   background: rgba(124, 161, 255, 0.2);
   border-color: #7CA1FF;
   color: #fff;
-}
-
-.carousel-dots {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-}
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-.dot.active {
-  background: #7CA1FF;
-  box-shadow: 0 0 8px rgba(124, 161, 255, 0.5);
 }
 
 /* === Featured Projects === */
@@ -1047,6 +1042,14 @@ a.social-card {
   box-shadow: 0 8px 30px rgba(236, 72, 153, 0.12);
   border-color: rgba(236, 72, 153, 0.35);
 }
+[data-md-color-scheme="default"] .carousel-card.active {
+  box-shadow: 0 8px 32px rgba(236, 72, 153, 0.2);
+  border-color: rgba(236, 72, 153, 0.4);
+}
+[data-md-color-scheme="default"] .carousel-card.active:hover {
+  box-shadow: 0 12px 40px rgba(236, 72, 153, 0.3);
+  border-color: rgba(236, 72, 153, 0.6);
+}
 [data-md-color-scheme="default"] .card-title {
   color: #1e293b;
 }
@@ -1126,13 +1129,6 @@ a.social-card {
   color: rgba(0, 0, 0, 0.4);
   border-top-color: rgba(0, 0, 0, 0.06);
 }
-[data-md-color-scheme="default"] .dot {
-  background: rgba(0, 0, 0, 0.2);
-}
-[data-md-color-scheme="default"] .dot.active {
-  background: #ec4899;
-  box-shadow: 0 0 8px rgba(236, 72, 153, 0.4);
-}
 [data-md-color-scheme="default"] .section-title {
   color: #ec4899;
   border-image: linear-gradient(180deg, #ec4899, #d946ef) 1;
@@ -1184,7 +1180,14 @@ a.social-card {
   .blog-date {
     width: auto;
   }
-  .carousel-track {
-    width: 220px;
+  .carousel-cards {
+    gap: 0.5rem;
+  }
+  .carousel-card {
+    width: 120px;
+    padding: 1.2rem 0.8rem;
+  }
+  .carousel-card.active {
+    width: 150px;
   }
 }

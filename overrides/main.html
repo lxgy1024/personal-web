@@ -72,29 +72,10 @@
     <section class="homepage-carousel">
       <div class="carousel-container">
         <button class="carousel-arrow carousel-prev" onclick="window.prevCard()" aria-label="上一张">‹</button>
-        <div class="carousel-track" id="carousel-track">
-          <div class="carousel-card" onclick="location.href='/personal-web/blog/'">
-            <div class="card-icon">📝</div>
-            <div class="card-title">博客</div>
-            <div class="card-desc">8 篇文章</div>
-          </div>
-          <div class="carousel-card" onclick="location.href='/personal-web/projects/'">
-            <div class="card-icon">💻</div>
-            <div class="card-title">项目</div>
-            <div class="card-desc">2 个项目</div>
-          </div>
-          <div class="carousel-card" onclick="window.open('https://github.com/lxgy1024')">
-            <div class="card-icon">🐙</div>
-            <div class="card-title">GitHub</div>
-            <div class="card-desc">开源代码</div>
-          </div>
+        <div class="carousel-cards" id="carousel-cards">
+          <!-- JS renders cards here -->
         </div>
         <button class="carousel-arrow carousel-next" onclick="window.nextCard()" aria-label="下一张">›</button>
-      </div>
-      <div class="carousel-dots" id="carousel-dots">
-        <span class="dot active" onclick="window.goToCard(0)"></span>
-        <span class="dot" onclick="window.goToCard(1)"></span>
-        <span class="dot" onclick="window.goToCard(2)"></span>
       </div>
     </section>
 

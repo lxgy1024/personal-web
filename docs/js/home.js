@@ -31,35 +31,48 @@
     }
   }
 
-  /* ===== Carousel ===== */
-  var currentCard = 0;
-  var totalCards = 3;
+  /* ===== Carousel - Three Cards Rotation ===== */
+  var cardData = [
+    { icon: '💻', title: '项目', desc: '2 个项目', url: '/personal-web/projects/' },
+    { icon: '📝', title: '博客', desc: '8 篇文章', url: '/personal-web/blog/' },
+    { icon: '🐙', title: 'GitHub', desc: '开源代码', url: 'https://github.com/lxgy1024', external: true }
+  ];
+  var currentCenter = 1; // 博客 starts in center (项目, 博客, GitHub)
   var autoTimer = null;
 
-  function updateCarousel() {
-    var track = document.getElementById('carousel-track');
-    var dots = document.querySelectorAll('.dot');
-    if (track) track.style.transform = 'translateX(-' + (currentCard * 100) + '%)';
-    dots.forEach(function (d, i) {
-      d.classList.toggle('active', i === currentCard);
+  function renderCards() {
+    var container = document.getElementById('carousel-cards');
+    if (!container) return;
+
+    var left = (currentCenter + 2) % 3;
+    var right = (currentCenter + 1) % 3;
+    var indices = [left, currentCenter, right];
+
+    container.innerHTML = '';
+    indices.forEach(function (idx, i) {
+      var card = cardData[idx];
+      var el = document.createElement('div');
+      el.className = 'carousel-card' + (i === 1 ? ' active' : '');
+      el.innerHTML = '<div class="card-icon">' + card.icon + '</div>' +
+                     '<div class="card-title">' + card.title + '</div>' +
+                     '<div class="card-desc">' + card.desc + '</div>';
+      el.addEventListener('click', function () {
+        if (card.external) window.open(card.url);
+        else location.href = card.url;
+      });
+      container.appendChild(el);
     });
   }
 
-  window.goToCard = function (index) {
-    currentCard = index;
-    updateCarousel();
-    resetAuto();
-  };
-
   window.prevCard = function () {
-    currentCard = (currentCard - 1 + totalCards) % totalCards;
-    updateCarousel();
+    currentCenter = (currentCenter + 1) % 3;
+    renderCards();
     resetAuto();
   };
 
   window.nextCard = function () {
-    currentCard = (currentCard + 1) % totalCards;
-    updateCarousel();
+    currentCenter = (currentCenter + 2) % 3;
+    renderCards();
     resetAuto();
   };
 
@@ -69,15 +82,17 @@
   }
 
   function initCarousel() {
-    var track = document.getElementById('carousel-track');
-    if (!track) return;
-    track.style.transition = 'transform 0.3s ease';
+    var container = document.getElementById('carousel-cards');
+    if (!container) return;
+    renderCards();
     resetAuto();
-    var container = track.parentElement;
-    container.addEventListener('mouseenter', function () {
-      if (autoTimer) clearInterval(autoTimer);
-    });
-    container.addEventListener('mouseleave', resetAuto);
+    var section = container.closest('.homepage-carousel');
+    if (section) {
+      section.addEventListener('mouseenter', function () {
+        if (autoTimer) clearInterval(autoTimer);
+      });
+      section.addEventListener('mouseleave', resetAuto);
+    }
   }
 
   /* ===== GitHub Stats ===== */
