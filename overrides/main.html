@@ -152,6 +152,7 @@
 
 {% block footer %}
   <footer class="homepage-footer">
+    {% if page.is_homepage %}
     <div class="footer-content">
       <div class="footer-col">
         <h3>About Me</h3>
@@ -170,6 +171,7 @@
         <p>Hangzhou, China</p>
       </div>
     </div>
+    {% endif %}
     <div class="footer-bar">
       © 2026 赶月喵 · Built with ♥ · Powered by MkDocs
     </div>
