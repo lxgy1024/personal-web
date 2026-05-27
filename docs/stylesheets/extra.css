@@ -585,7 +585,7 @@ a.social-card {
   justify-content: center;
   background: linear-gradient(135deg, #0a0a1a 0%, #16213e 50%, #0f0f2e 100%);
   overflow: hidden;
-  padding: 80px 1.5rem 60px;
+  padding: 64px 1.5rem 40px;
 }
 
 #hero-particles {
@@ -685,7 +685,7 @@ a.social-card {
 
 /* === Feature Card Carousel === */
 .homepage-carousel {
-  padding: 4rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   background: linear-gradient(180deg, #0f0f2e, #0a0a1a);
 }
 
@@ -694,7 +694,7 @@ a.social-card {
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
-  max-width: 700px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -777,7 +777,7 @@ a.social-card {
 
 /* === Featured Projects === */
 .homepage-projects {
-  padding: 4rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   background: #0a0a1a;
 }
 
@@ -785,7 +785,7 @@ a.social-card {
   font-size: 1.5rem;
   font-weight: 700;
   color: #7CA1FF;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   padding-left: 1rem;
   border-left: 3px solid;
   border-image: linear-gradient(180deg, #7CA1FF, #b388ff) 1;
@@ -870,7 +870,7 @@ a.social-card {
 
 /* === Latest Blog === */
 .homepage-blog {
-  padding: 4rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   background: linear-gradient(0deg, #0a0a1a, #0f0f2e);
 }
 
@@ -1141,7 +1141,7 @@ a.social-card {
 
 /* === Homepage Thoughts Section === */
 .homepage-thoughts {
-  padding: 4rem 1.5rem;
+  padding: 2.5rem 1.5rem;
   background: #0a0a1a;
 }
 
