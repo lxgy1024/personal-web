@@ -1,3 +1,9 @@
+---
+hide:
+  - navigation
+  - toc
+---
+
 # 你好，我是赶月喵
 
 <div class="home-cards">

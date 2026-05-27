@@ -12,6 +12,7 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  custom_dir: overrides
   language: zh
   features:
     - navigation.tabs
@@ -70,6 +71,7 @@ extra_javascript:
   - js/katex.js
   - https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js
   - js/zoom.js
+  - js/home.js
 
 extra_css:
   - https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css
