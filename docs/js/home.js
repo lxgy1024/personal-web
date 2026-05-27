@@ -5,16 +5,16 @@
 
 /* ===== Theme Toggle (available on all pages) ===== */
 window.toggleHomepageTheme = function () {
-  var toggles = document.querySelectorAll('input[data-md-toggle="__palette"]');
-  if (toggles.length > 1) {
-    for (var i = 0; i < toggles.length; i++) {
-      if (toggles[i].checked) {
-        toggles[(i + 1) % toggles.length].click();
-        return;
-      }
+  var current = document.body.getAttribute('data-md-color-scheme');
+  var next = current === 'default' ? 'slate' : 'default';
+  document.body.setAttribute('data-md-color-scheme', next);
+  try {
+    localStorage.setItem('__theme', next);
+    // Also persist in MkDocs' own storage for cross-page consistency
+    if (window.__md_set) {
+      __md_set('__palette', { index: next === 'slate' ? 1 : 0 });
     }
-    toggles[0].click();
-  }
+  } catch (e) {}
 };
 
 (function () {
