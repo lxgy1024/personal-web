@@ -3,6 +3,20 @@
  * Only runs on the homepage (guard: document.querySelector('.homepage-hero'))
  */
 
+/* ===== Theme Toggle (available on all pages) ===== */
+window.toggleHomepageTheme = function () {
+  var toggles = document.querySelectorAll('input[data-md-toggle="__palette"]');
+  if (toggles.length > 1) {
+    for (var i = 0; i < toggles.length; i++) {
+      if (toggles[i].checked) {
+        toggles[(i + 1) % toggles.length].click();
+        return;
+      }
+    }
+    toggles[0].click();
+  }
+};
+
 (function () {
   if (!document.querySelector('.homepage-hero')) return;
 
@@ -119,19 +133,6 @@
       xhr.send();
     });
   }
-
-  /* ===== Theme Toggle ===== */
-  window.toggleHomepageTheme = function () {
-    var key = (location.pathname + '__palette').replace(/\/\//g, '/');
-    var stored = (function () {
-      try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; }
-    })() || { color: { scheme: 'default', primary: 'indigo', accent: 'indigo' } };
-
-    stored.color.scheme = stored.color.scheme === 'default' ? 'slate' : 'default';
-    stored.color.media = '(prefers-color-scheme:' + (stored.color.scheme === 'default' ? 'light' : 'dark') + ')';
-    try { localStorage.setItem(key, JSON.stringify(stored)); } catch (e) { /* ignore */ }
-    document.body.setAttribute('data-md-color-scheme', stored.color.scheme);
-  };
 
   /* ===== Scroll Observer ===== */
   function observeEntries() {

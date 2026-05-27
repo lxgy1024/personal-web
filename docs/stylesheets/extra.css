@@ -378,6 +378,11 @@ a.social-card {
   color: #93c5fd; /* blue-300 */
 }
 
+/* === Clear fixed header on content pages === */
+.md-sidebar ~ .md-content {
+  padding-top: 2rem;
+}
+
 /* === 标签页 (tags.md) === */
 /* 标签页中的标签徽章 */
 .md-tag {
@@ -1132,6 +1137,60 @@ a.social-card {
 [data-md-color-scheme="default"] .section-title {
   color: #ec4899;
   border-image: linear-gradient(180deg, #ec4899, #d946ef) 1;
+}
+
+/* === Homepage Thoughts Section === */
+.homepage-thoughts {
+  padding: 4rem 1.5rem;
+  background: #0a0a1a;
+}
+
+.thoughts-preview {
+  max-width: 700px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.thoughts-preview p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 1.5rem;
+}
+
+.thoughts-link-btn {
+  display: inline-block;
+  padding: 0.6em 1.8em;
+  border: 1px solid rgba(124, 161, 255, 0.4);
+  border-radius: 999px;
+  color: #7CA1FF;
+  text-decoration: none !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.thoughts-link-btn:hover {
+  background: rgba(124, 161, 255, 0.15);
+  border-color: #7CA1FF;
+  box-shadow: 0 0 15px rgba(124, 161, 255, 0.3);
+}
+
+[data-md-color-scheme="default"] .homepage-thoughts {
+  background: #fef6f8;
+}
+
+[data-md-color-scheme="default"] .thoughts-preview p {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+[data-md-color-scheme="default"] .thoughts-link-btn {
+  border-color: rgba(236, 72, 153, 0.3);
+  color: #ec4899;
+}
+
+[data-md-color-scheme="default"] .thoughts-link-btn:hover {
+  background: rgba(236, 72, 153, 0.1);
+  border-color: #ec4899;
+  box-shadow: 0 0 15px rgba(236, 72, 153, 0.2);
 }
 
 /* === Responsive === */
