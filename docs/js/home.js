@@ -17,13 +17,23 @@ window.toggleHomepageTheme = function () {
   } catch (e) {}
 };
 
-/* ===== Sidebar scrollbar — only show when 10+ nav items ===== */
+/* ===== Sidebar scrollbar — hide when fewer than 10 visible items ===== */
 (function () {
   ['primary', 'secondary'].forEach(function (type) {
     var wrap = document.querySelector('.md-sidebar--' + type + ' .md-sidebar__scrollwrap');
     if (!wrap) return;
     var items = wrap.querySelectorAll('.md-nav__item');
-    if (items.length < 10) {
+    var count;
+    if (type === 'primary') {
+      // Only count nav items (not TOC) that are visible (not inside collapsed sections)
+      count = Array.from(items).filter(function (item) {
+        return !item.closest('.md-nav--secondary') &&
+               !item.closest('nav[aria-expanded="false"]');
+      }).length;
+    } else {
+      count = items.length;
+    }
+    if (count < 10) {
       wrap.style.overflow = 'hidden';
     }
   });
