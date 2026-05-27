@@ -17,6 +17,18 @@ window.toggleHomepageTheme = function () {
   } catch (e) {}
 };
 
+/* ===== Sidebar scrollbar — only show when 10+ nav items ===== */
+(function () {
+  ['primary', 'secondary'].forEach(function (type) {
+    var wrap = document.querySelector('.md-sidebar--' + type + ' .md-sidebar__scrollwrap');
+    if (!wrap) return;
+    var items = wrap.querySelectorAll('.md-nav__item');
+    if (items.length < 10) {
+      wrap.style.overflow = 'hidden';
+    }
+  });
+})();
+
 (function () {
   if (!document.querySelector('.homepage-hero')) return;
 
