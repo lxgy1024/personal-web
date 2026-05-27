@@ -422,6 +422,41 @@ a.social-card {
 .thoughts-header h1 {
   border-bottom: none !important;
 }
+
+/* === Day Counters (thoughts page) === */
+.day-counters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem 1.5rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(124, 161, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(124, 161, 255, 0.05);
+}
+[data-md-color-scheme="default"] .day-counters {
+  border-color: rgba(236, 72, 153, 0.2);
+  background: rgba(236, 72, 153, 0.04);
+}
+.counter-item {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+}
+.counter-item strong {
+  font-size: 1.2rem;
+  color: #7CA1FF;
+  margin-left: 0.3rem;
+}
+[data-md-color-scheme="default"] .counter-item {
+  color: rgba(0, 0, 0, 0.6);
+}
+[data-md-color-scheme="default"] .counter-item strong {
+  color: #ec4899;
+}
+
 .thought-card {
   padding: 1.2rem 1.5rem;
   margin-bottom: 1rem;
