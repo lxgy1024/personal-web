@@ -65,13 +65,13 @@
   }
 
   window.prevCard = function () {
-    currentCenter = (currentCenter + 1) % 3;
+    currentCenter = (currentCenter + 2) % 3;
     renderCards();
     resetAuto();
   };
 
   window.nextCard = function () {
-    currentCenter = (currentCenter + 2) % 3;
+    currentCenter = (currentCenter + 1) % 3;
     renderCards();
     resetAuto();
   };
