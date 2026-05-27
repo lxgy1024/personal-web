@@ -6,7 +6,8 @@
     "dev": "tsx watch api/cron/sync.ts"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.35"
+    "@atproto/api": "^0.13.35",
+    "undici": "^8.3.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
