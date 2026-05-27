@@ -183,35 +183,28 @@ window.toggleHomepageTheme = function () {
 
 /* ===== Day Counters — HRT & 休学 ===== */
 (function () {
-  // Only run on the 碎碎念 page
-  var blurb = document.querySelector('.md-content p');
-  if (!blurb || blurb.textContent.indexOf('同步自 Bluesky') === -1) return;
-  if (document.getElementById('hrt-days')) return; // already injected
+  // Inject counters if not already in the page
+  if (!document.getElementById('hrt-days') && !document.getElementById('suspend-days')) {
+    var blurb = document.querySelector('.md-content p');
+    if (!blurb || blurb.textContent.indexOf('同步自 Bluesky') === -1) return;
+    var div = document.createElement('div');
+    div.innerHTML = '<div class="day-counters" style="margin:1rem auto 1.5rem;max-width:700px">' +
+      '<span class="counter-item">🏳️‍⚧️ HRT Day <strong id="hrt-days">—</strong></span>' +
+      '<span class="counter-sep"></span>' +
+      '<span class="counter-item">📚 休学 Day <strong id="suspend-days">—</strong></span>' +
+      '</div>';
+    blurb.parentNode.insertBefore(div.firstChild, blurb.nextSibling);
+  }
 
-  var counterHtml = '<div class="day-counters" style="margin:1rem auto 1.5rem;max-width:700px">' +
-    '<span class="counter-item">&#x1F3F3&#xFE0F&#x200D&#x26A7&#xFE0F; HRT Day <strong id="hrt-days">&mdash;</strong></span>' +
-    '<span class="counter-sep"></span>' +
-    '<span class="counter-item">&#x1F4DA; 休学 Day <strong id="suspend-days">&mdash;</strong></span>' +
-    '</div>';
-
-  var div = document.createElement('div');
-  div.innerHTML = counterHtml;
-  blurb.parentNode.insertBefore(div.firstChild, blurb.nextSibling);
+  var hrtEl = document.getElementById('hrt-days');
+  var suspendEl = document.getElementById('suspend-days');
+  if (!hrtEl && !suspendEl) return;
 
   function updateDays() {
     var now = new Date();
     var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-    var hrtEl = document.getElementById('hrt-days');
-    var suspendEl = document.getElementById('suspend-days');
-
-    if (hrtEl) {
-      var hrtDays = Math.floor((today - Date.UTC(2026, 0, 4)) / 86400000) + 1;
-      hrtEl.textContent = hrtDays;
-    }
-    if (suspendEl) {
-      var suspendDays = Math.floor((today - Date.UTC(2026, 3, 2)) / 86400000) + 1;
-      suspendEl.textContent = suspendDays;
-    }
+    if (hrtEl) hrtEl.textContent = Math.floor((today - Date.UTC(2026, 0, 4)) / 86400000) + 1;
+    if (suspendEl) suspendEl.textContent = Math.floor((today - Date.UTC(2026, 3, 2)) / 86400000) + 1;
   }
 
   updateDays();
