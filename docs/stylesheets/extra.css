@@ -707,7 +707,7 @@ a.social-card {
   align-items: center;
   text-align: center;
   padding: 1.5rem 1rem;
-  width: 160px;
+  flex: 1;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(124, 161, 255, 0.2);
   border-radius: 16px;
@@ -722,7 +722,7 @@ a.social-card {
 }
 
 .carousel-card.active {
-  width: 190px;
+  flex: 1.25;
   transform: scale(1.08);
   border-color: rgba(124, 161, 255, 0.5);
   box-shadow: 0 8px 32px rgba(124, 161, 255, 0.25);
@@ -1184,10 +1184,9 @@ a.social-card {
     gap: 0.5rem;
   }
   .carousel-card {
-    width: 120px;
-    padding: 1.2rem 0.8rem;
+    padding: 1.2rem 0.5rem;
   }
   .carousel-card.active {
-    width: 150px;
+    flex: 1.25;
   }
 }
