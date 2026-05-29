@@ -15,12 +15,14 @@ hide:
 ## Mirekintoc
 曾经的朋友，同学，也是 OIer
 （唉，为什么要把他放来了呢）
+  
 [他的 github](https://github.com/vochant) · [他的博客](https://vochant.github.io)
 </div>
 
 <div class="friend-card" markdown>
 ## lailai0916
 曾经的朋友，同学，也是 OIer
+  
 （唉，为什么要把他放来了呢）
 [他的 github](https://github.com/lailai0916) · [他的博客](https://lailai.one/)
 </div>
