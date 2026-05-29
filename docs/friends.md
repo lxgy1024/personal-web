@@ -12,10 +12,10 @@ hide:
 <div class="friend-grid" markdown>
 
 <div class="friend-card" markdown>
-## 示例朋友
-一只可爱的朋友喵
+## Mirekintoc
+Better NOI, worse me 🏃
 
-[:fontawesome-brands-github: GitHub](https://github.com/) · [:fontawesome-solid-blog: 博客](https://example.com/)
+[:fontawesome-brands-github: GitHub](https://github.com/vochant) · [:fontawesome-solid-blog: 博客](https://vochant.github.io)
 </div>
 
 <div class="friend-card" markdown>
