@@ -45,6 +45,7 @@ theme:
 
 plugins:
   - search
+  - meta
   - blog:
       blog_dir: blog
       post_dir: blog/posts
@@ -81,6 +82,7 @@ nav:
   - 首页: index.md
   - 关于: about.md
   - 社交: social.md
+  - 友链: friends.md
   - 碎碎念: thoughts/index.md
   - 博客:
     - blog/index.md
