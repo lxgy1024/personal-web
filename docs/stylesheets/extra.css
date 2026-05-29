@@ -417,12 +417,12 @@ a.social-card {
 /* === 友链页面 === */
 .friend-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
   margin: 1.5rem 0;
 }
 .friend-card {
-  padding: 1.2rem 1.5rem;
+  padding: 1.2rem 1.2rem;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   background: #fef6f8;
@@ -435,25 +435,51 @@ a.social-card {
   border-color: transparent;
 }
 .friend-card h2 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #1e293b;
   border-bottom: none !important;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 .friend-card p {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: #64748b;
-  line-height: 1.6;
-  margin: 0.3rem 0 0.6rem;
+  line-height: 1.5;
+  margin: 0.2rem 0 0.5rem;
 }
 .friend-card a {
   color: #3b82f6 !important;
-  font-size: 0.85rem;
-  margin: 0 0.3rem;
+  font-size: 0.8rem;
+  margin: 0 0.25rem;
 }
 .friend-card a:hover {
   color: #ec4899 !important;
+}
+
+.friend-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.6rem;
+  border: 2px solid rgba(236, 72, 153, 0.2);
+  transition: border-color 0.3s ease;
+}
+.friend-card:hover .friend-avatar {
+  border-color: rgba(236, 72, 153, 0.5);
+}
+
+.friend-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  margin: 0 auto 0.6rem;
+  background: linear-gradient(135deg, rgba(124,161,255,0.15), rgba(179,136,255,0.15));
+  font-size: 1.5rem;
+  border: 2px dashed rgba(124,161,255,0.3);
 }
 
 [data-md-color-scheme="slate"] .friend-card {
