@@ -21,6 +21,7 @@ hide:
 </div>
 
 <div class="friend-card" markdown>
+<img src="https://avatars.githubusercontent.com/u/118368461?v=4" alt="lailai0916" class="friend-avatar">
 ## lailai0916
 曾经的朋友，同学，也是 OIer
   （唉，为什么要把他放来了呢）
