@@ -189,13 +189,23 @@ def main():
         created_at = record.get("createdAt", "")
         if not text:
             continue
-        normalized = strip_twitter_url(text)
-        has_sync_url = text != normalized
+
+        # Strip dedup markers and URLs early, so we don't render blank entries
+        # whose text is entirely invisible characters (zero-width markers).
+        cleaned = strip_dedup_marker(strip_twitter_url(text)).strip()
+        if not cleaned:
+            continue
+
+        normalized = strip_dedup_marker(strip_twitter_url(text))
+        has_sync_url = text != strip_twitter_url(text)
         if normalized in seen:
             # If existing entry is a synced copy and this one is original, replace
             existing_idx = seen[normalized]
             existing_text = posts[existing_idx][1]
-            if strip_twitter_url(existing_text) != existing_text and not has_sync_url:
+            if (
+                strip_twitter_url(existing_text) != existing_text
+                and not has_sync_url
+            ):
                 posts[existing_idx] = (created_at, text, post, record)
             continue
         seen[normalized] = len(posts)
